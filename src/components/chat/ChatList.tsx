@@ -8,7 +8,7 @@ import {
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuTrigger 
-} from "@/components/ui/button" // Wait, I meant dropdown-menu
+} from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useParams, useRouter } from "next/navigation"

@@ -22,11 +22,12 @@ import { toast } from "sonner"
 
 export const ChatWindow = () => {
   const [input, setInput] = useState("")
-  const { messages, status, sendMessage, stop, reload } = useChat({
+  const { messages, status, sendMessage, stop, regenerate } = useChat({
+    // @ts-ignore
     api: "/api/chat",
-  })
+  } as any)
 
-  const isLoading = status === "streaming" || status === "submitting"
+  const isLoading = status !== "ready"
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -120,13 +121,13 @@ export const ChatWindow = () => {
                 {m.role !== "user" && (
                   <div className="flex items-center gap-4 px-1">
                     <button 
-                      onClick={() => copyToClipboard(m.parts?.[0]?.text || (m as any).content || "")} 
+                      onClick={() => copyToClipboard(m.parts?.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('') || (m as any).content || "")} 
                       className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
                     >
                       Copy Asset
                     </button>
                     <button 
-                      onClick={() => reload()} 
+                      onClick={() => regenerate()} 
                       className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
                     >
                       Regenerate
