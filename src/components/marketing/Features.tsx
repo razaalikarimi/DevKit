@@ -1,92 +1,71 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { 
-  MessageSquare, 
-  Code2, 
+  BarChart3, 
+  Lock, 
+  Settings2, 
+  Terminal, 
   Zap, 
-  Layers, 
-  ShieldCheck, 
-  Cpu,
-  BarChart3,
-  Bot
+  Globe,
+  Database,
+  Cpu
 } from "lucide-react"
 
-const features = [
+const FEATURES = [
   {
-    title: "Next-Gen Chat",
-    description: "Human-like conversations with multi-modal support and context awareness.",
-    icon: MessageSquare,
-    className: "md:col-span-2",
-    color: "bg-blue-500/10 text-blue-400"
+    title: "Enterprise Intelligence",
+    description: "Our proprietary AI models are optimized for business reasoning and decision making.",
+    icon: Cpu,
   },
   {
-    title: "AI Agents",
-    description: "Autonomous workers for complex tasks.",
-    icon: Bot,
-    className: "md:col-span-1",
-    color: "bg-purple-500/10 text-purple-400"
+    title: "Global Scalability",
+    description: "Deploy AI solutions across your entire organization with multi-region support and high availability.",
+    icon: Globe,
   },
   {
-    title: "Code Intel",
-    description: "Enterprise-grade code generation and security scanning.",
-    icon: Code2,
-    className: "md:col-span-1",
-    color: "bg-emerald-500/10 text-emerald-400"
+    title: "Security & Compliance",
+    description: "Enterprise-grade encryption and compliance standards (SOC2, GDPR) built into the core.",
+    icon: Lock,
   },
   {
-    title: "Workflows",
-    description: "Drag-and-drop AI pipeline builder for rapid automation.",
-    icon: Zap,
-    className: "md:col-span-2",
-    color: "bg-amber-500/10 text-amber-400"
-  },
-  {
-    title: "Real-time Analytics",
-    description: "Monitor AI performance and costs across your entire organization.",
-    icon: BarChart3,
-    className: "md:col-span-1",
-    color: "bg-pink-500/10 text-pink-400"
-  },
-  {
-    title: "Secure RAG",
-    description: "Knowledge-base integration with advanced encryption and isolation.",
-    icon: ShieldCheck,
-    className: "md:col-span-1",
-    color: "bg-cyan-500/10 text-cyan-400"
+    title: "Custom Integrations",
+    description: "Connect your existing data sources and workflows seamlessly with our enterprise API.",
+    icon: Database,
   }
 ]
 
 export const Features = () => {
   return (
-    <section id="features" className="py-24 container px-4">
-      <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-white mb-4">Enterprise Capabilities</h2>
-        <p className="text-zinc-400 max-w-xl mx-auto">
-          Everything you need to ship AI-native applications at scale.
-        </p>
-      </div>
+    <section className="bg-white" id="solutions">
+      <div className="section-padding max-w-7xl mx-auto">
+        <div className="mb-20 space-y-4">
+          <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em]">Our Platform</h2>
+          <h3 className="text-4xl md:text-5xl font-bold max-w-2xl">
+            Reliable AI solutions built for <br /> 
+            <span className="text-muted-foreground">mission-critical operations.</span>
+          </h3>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {features.map((feature, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className={`group relative overflow-hidden rounded-3xl glass-dark border border-white/5 p-8 hover:border-white/20 transition-all ${feature.className}`}
-          >
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 ${feature.color}`}>
-              <feature.icon className="w-6 h-6" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1">
+          {FEATURES.map((feature, i) => (
+            <div 
+              key={i} 
+              className="enterprise-card h-full flex flex-col justify-between group cursor-pointer"
+            >
+              <div className="space-y-6">
+                <feature.icon className="text-primary" size={32} />
+                <h4 className="text-xl font-bold group-hover:text-primary transition-colors">{feature.title}</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+              <div className="pt-8 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                Learn more
+                <div className="w-8 h-[1px] bg-primary" />
+              </div>
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
-            <p className="text-zinc-400 leading-relaxed">{feature.description}</p>
-            
-            {/* Subtle Gradient Overlay on Hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          </motion.div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )

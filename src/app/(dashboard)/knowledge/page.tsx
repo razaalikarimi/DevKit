@@ -5,14 +5,11 @@ import {
   FileUp, 
   Search, 
   FileText, 
-  MoreVertical, 
   Trash2, 
-  ExternalLink,
   ShieldCheck,
   Database,
   Loader2
 } from "lucide-react"
-import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
@@ -51,7 +48,7 @@ export default function KnowledgePage() {
 
       if (!res.ok) throw new Error("Upload failed")
       
-      toast.success(`${file.name} uploaded and parsed!`)
+      toast.success(`${file.name} uploaded successfully.`)
       fetchDocs()
     } catch (error) {
       toast.error("Error uploading file")
@@ -64,7 +61,7 @@ export default function KnowledgePage() {
   const handleDelete = async (id: string) => {
     try {
       await deleteDocument(id)
-      toast.success("Document deleted")
+      toast.success("Document removed.")
       fetchDocs()
     } catch (error) {
       toast.error("Failed to delete document")
@@ -79,7 +76,7 @@ export default function KnowledgePage() {
   const formattedSize = (totalSize / (1024 * 1024)).toFixed(2)
 
   return (
-    <div className="p-8 h-full overflow-y-auto">
+    <div className="p-10 h-full overflow-y-auto">
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -88,124 +85,126 @@ export default function KnowledgePage() {
         accept=".pdf,.docx,.txt"
       />
       
-      <div className="flex items-center justify-between mb-10">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Knowledge Base</h1>
-          <p className="text-zinc-500 mt-1 text-sm">Upload documents to power your AI with custom context.</p>
+      <div className="flex items-center justify-between mb-12">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Knowledge Assets</h1>
+          <p className="text-muted-foreground text-sm">Manage enterprise documents for semantic search and AI context.</p>
         </div>
         <Button 
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="ai-gradient border-none gap-2"
+          className="enterprise-btn h-12"
         >
           {isUploading ? <Loader2 className="animate-spin" size={16} /> : <FileUp size={16} />}
-          {isUploading ? "Uploading..." : "Upload Document"}
+          {isUploading ? "Processing..." : "Add Document"}
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="lg:col-span-2 space-y-8">
           <div 
             onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-white/5 rounded-3xl p-12 flex flex-col items-center justify-center text-center bg-white/[0.01] hover:bg-white/[0.02] transition-all cursor-pointer group"
+            className="border border-dashed border-border p-16 flex flex-col items-center justify-center text-center bg-secondary/30 hover:bg-secondary/50 transition-colors cursor-pointer group"
           >
-            <div className="w-16 h-16 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <FileUp size={32} />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Drop your files here</h3>
-            <p className="text-zinc-500 text-sm max-w-xs mx-auto">
-              Support for PDF, DOCX, and TXT. Files are processed for semantic search locally.
+            <FileUp size={48} className="text-primary mb-6" />
+            <h3 className="text-xl font-bold mb-2">Upload Data Sources</h3>
+            <p className="text-muted-foreground text-sm max-w-sm">
+              Drag and drop PDF, DOCX, or TXT files. Aura indexes your data for instant retrieval.
             </p>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-widest">My Documents</h3>
+            <div className="flex items-center justify-between border-b border-border pb-4">
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Document Inventory</h3>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" size={14} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
                 <Input 
-                  placeholder="Search docs..." 
-                  className="h-8 pl-9 bg-white/5 border-white/5 text-xs w-[200px]"
+                  placeholder="Filter inventory..." 
+                  className="h-9 pl-9 bg-white border-border text-xs w-[240px] rounded-none"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
             </div>
 
-            {loading ? (
-              [1, 2].map(n => <Card key={n} className="h-20 glass-dark border-white/5 animate-pulse" />)
-            ) : filteredDocs.length === 0 ? (
-              <div className="py-20 text-center opacity-30">
-                <FileText size={48} className="mx-auto mb-4" />
-                <p>No documents found</p>
-              </div>
-            ) : (
-              filteredDocs.map((doc) => (
-                <Card key={doc.id} className="p-4 glass-dark border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all group">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-zinc-400">
-                        <FileText size={20} />
-                      </div>
+            <div className="grid grid-cols-1 gap-1 bg-border border border-border">
+              {loading ? (
+                <div className="p-12 bg-white text-center text-muted-foreground text-sm">Loading inventory...</div>
+              ) : filteredDocs.length === 0 ? (
+                <div className="p-12 bg-white text-center text-muted-foreground text-sm">No documents registered.</div>
+              ) : (
+                filteredDocs.map((doc) => (
+                  <div key={doc.id} className="p-6 bg-white hover:bg-secondary/50 transition-colors group flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                      <FileText size={24} className="text-primary" />
                       <div>
-                        <div className="text-sm font-medium text-white">{doc.name}</div>
-                        <div className="text-[10px] text-zinc-500 flex items-center gap-2">
-                          <span>{(doc.size / 1024).toFixed(1)} KB</span>
+                        <div className="text-sm font-bold text-foreground">{doc.name}</div>
+                        <div className="text-[10px] text-muted-foreground flex items-center gap-4 mt-1">
+                          <span className="uppercase font-bold tracking-widest">{(doc.size / 1024).toFixed(1)} KB</span>
                           <span>•</span>
-                          <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                          <span className="uppercase font-bold tracking-widest">{new Date(doc.createdAt).toLocaleDateString()}</span>
                           <span>•</span>
-                          <span className="text-emerald-500 flex items-center gap-1">
+                          <span className="text-primary flex items-center gap-1 font-bold uppercase tracking-widest">
                             <ShieldCheck size={10} />
-                            {doc.status}
+                            Verified
                           </span>
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-zinc-500 hover:text-red-500"
-                        onClick={() => handleDelete(doc.id)}
-                      >
-                        <Trash2 size={14} />
-                      </Button>
-                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-10 w-10 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleDelete(doc.id)}
+                    >
+                      <Trash2 size={18} />
+                    </Button>
                   </div>
-                </Card>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="space-y-6">
-          <Card className="p-6 glass-dark border-white/5 bg-white/[0.02]">
-            <div className="flex items-center gap-3 mb-6">
-              <Database className="text-purple-400" size={20} />
-              <h3 className="font-bold text-white">Storage Usage</h3>
+        <div className="space-y-8">
+          <div className="p-8 border border-border bg-white">
+            <div className="flex items-center gap-3 mb-8">
+              <Database className="text-primary" size={24} />
+              <h3 className="font-bold text-lg">System Resources</h3>
             </div>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs">
-                  <span className="text-zinc-500">Workspace Storage</span>
-                  <span className="text-white">{formattedSize} MB / 100 MB</span>
+            <div className="space-y-8">
+              <div className="space-y-3">
+                <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
+                  <span className="text-muted-foreground">Vector Storage</span>
+                  <span>{formattedSize} MB / 100 MB</span>
                 </div>
-                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-500 transition-all duration-500" style={{ width: `${Math.min(100, (totalSize / (100 * 1024 * 1024)) * 100)}%` }} />
+                <div className="h-1 bg-secondary overflow-hidden">
+                  <div className="h-full bg-primary transition-all duration-1000" style={{ width: `${Math.min(100, (totalSize / (100 * 1024 * 1024)) * 100)}%` }} />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+              <div className="grid grid-cols-2 gap-8 pt-8 border-t border-border">
                 <div>
-                  <div className="text-[10px] text-zinc-600 uppercase font-bold">Docs</div>
-                  <div className="text-xl font-bold text-white">{documents.length}</div>
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-[0.2em] mb-1">Index Count</div>
+                  <div className="text-2xl font-bold">{documents.length}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-zinc-600 uppercase font-bold">Status</div>
-                  <div className="text-sm font-bold text-emerald-500">Optimal</div>
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-[0.2em] mb-1">Architecture</div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-primary">Hybrid RAG</div>
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
+
+          <div className="p-8 border border-border bg-primary text-white">
+            <h3 className="font-bold text-lg mb-4">Enterprise RAG</h3>
+            <p className="text-sm text-white/80 leading-relaxed mb-8">
+              Aura utilizes high-performance vector indexing to provide your AI with secure, real-time access to your organization's unique knowledge base.
+            </p>
+            <div className="h-[1px] bg-white/20 w-full mb-8" />
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">
+              Encryption: AES-256
+            </div>
+          </div>
         </div>
       </div>
     </div>

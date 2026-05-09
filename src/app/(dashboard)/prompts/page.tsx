@@ -5,16 +5,13 @@ import { getPrompts, createPrompt, deletePrompt } from "@/actions/prompts"
 import { 
   Plus, 
   Search, 
-  Star, 
   Copy, 
   Trash2, 
   Terminal, 
-  Tag,
-  Sparkles,
   Share2,
-  Lock
+  Lock,
+  Loader2
 } from "lucide-react"
-import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { 
@@ -56,10 +53,9 @@ export default function PromptsPage() {
     if (!name || !content) return
     try {
       await createPrompt({ name, description, prompt: content, isPublic })
-      toast.success("Prompt created successfully")
+      toast.success("Prompt template added.")
       setOpen(false)
       fetchPrompts()
-      // Reset form
       setName("")
       setDescription("")
       setContent("")
@@ -71,13 +67,13 @@ export default function PromptsPage() {
 
   const handleDelete = async (id: string) => {
     await deletePrompt(id)
-    toast.success("Prompt deleted")
+    toast.success("Template removed.")
     fetchPrompts()
   }
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    toast.success("Copied to clipboard")
+    toast.success("Prompt copied to clipboard.")
   }
 
   const filteredPrompts = prompts.filter(p => 
@@ -86,141 +82,133 @@ export default function PromptsPage() {
   )
 
   return (
-    <div className="p-8 h-full overflow-y-auto">
-      <div className="flex items-center justify-between mb-10">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Prompt Library</h1>
-          <p className="text-zinc-500 mt-1 text-sm">Save and reuse your most effective AI instructions.</p>
+    <div className="p-10 h-full overflow-y-auto">
+      <div className="flex items-center justify-between mb-12">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">System Prompts</h1>
+          <p className="text-muted-foreground text-sm">Engineered instructions and reusable AI templates.</p>
         </div>
         
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="ai-gradient border-none gap-2">
-              <Plus size={16} />
-              New Prompt
-            </Button>
+          <DialogTrigger className="enterprise-btn h-12 px-8">
+            <Plus size={18} />
+            Register Template
           </DialogTrigger>
-          <DialogContent className="glass-dark border-white/10 text-white max-w-2xl">
+          <DialogContent className="bg-white border-border rounded-none text-foreground max-w-2xl p-8">
             <DialogHeader>
-              <DialogTitle className="text-xl font-bold">Create Prompt Template</DialogTitle>
+              <DialogTitle className="text-2xl font-bold border-b border-border pb-4">New Template Configuration</DialogTitle>
             </DialogHeader>
-            <div className="space-y-6 py-4">
+            <div className="space-y-8 py-6">
               <div className="space-y-2">
-                <Label className="text-zinc-400">Name</Label>
+                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Asset Name</Label>
                 <Input 
-                  placeholder="e.g. SEO Content Strategist" 
-                  className="bg-white/5 border-white/10"
+                  placeholder="e.g. Legal Compliance Reviewer" 
+                  className="bg-white border-border rounded-none h-12"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-zinc-400">Description</Label>
+                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Operational Description</Label>
                 <Input 
-                  placeholder="What is this prompt for?" 
-                  className="bg-white/5 border-white/10"
+                  placeholder="Define the primary use case..." 
+                  className="bg-white border-border rounded-none h-12"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-zinc-400">System Prompt / Instructions</Label>
+                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">System Logic / Instructions</Label>
                 <Textarea 
-                  placeholder="Act as a professional..." 
-                  className="bg-white/5 border-white/10 min-h-[150px]"
+                  placeholder="Provide explicit AI instructions..." 
+                  className="bg-white border-border rounded-none min-h-[200px]"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label className="text-white">Public Template</Label>
-                  <p className="text-xs text-zinc-500">Allow others in your workspace to use this prompt.</p>
+              <div className="flex items-center justify-between p-4 bg-secondary/50 border border-border">
+                <div className="space-y-1">
+                  <Label className="text-sm font-bold">Public Accessibility</Label>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Share this asset across the workspace</p>
                 </div>
                 <Switch checked={isPublic} onCheckedChange={setIsPublic} />
               </div>
             </div>
-            <DialogFooter>
-              <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button onClick={handleCreate} className="ai-gradient border-none font-bold">Save Prompt</Button>
+            <DialogFooter className="border-t border-border pt-6">
+              <Button variant="ghost" onClick={() => setOpen(false)} className="rounded-none">Discard</Button>
+              <Button onClick={handleCreate} className="enterprise-btn h-12 px-10">Confirm Asset</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="mb-8 relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+      <div className="mb-12 relative max-w-md">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
         <Input 
-          placeholder="Search templates..." 
-          className="h-11 pl-10 bg-white/5 border-white/10 text-zinc-300 focus:border-purple-500/50"
+          placeholder="Filter templates..." 
+          className="h-12 pl-12 bg-white border-border rounded-none focus-visible:ring-primary"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 bg-border border border-border">
         {loading ? (
-          [1, 2, 3].map((n) => (
-            <Card key={n} className="h-48 glass-dark border-white/5 animate-pulse bg-white/5" />
-          ))
+          <div className="col-span-full py-20 bg-white text-center">
+            <Loader2 className="animate-spin mx-auto text-primary" size={32} />
+          </div>
         ) : filteredPrompts.length === 0 ? (
-          <div className="col-span-full py-20 flex flex-col items-center justify-center text-center opacity-50">
+          <div className="col-span-full py-32 bg-white flex flex-col items-center justify-center text-center opacity-40">
             <Terminal size={48} className="mb-4" />
-            <p className="text-lg">No prompts found</p>
-            <p className="text-sm">Create your first prompt to get started.</p>
+            <p className="font-bold uppercase tracking-widest text-xs">No assets identified</p>
           </div>
         ) : (
           filteredPrompts.map((prompt) => (
-            <Card key={prompt.id} className="p-6 glass-dark border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all group relative overflow-hidden">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
-                  <Terminal size={20} />
+            <div key={prompt.id} className="p-8 bg-white hover:bg-secondary/50 transition-colors group flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-8">
+                  <Terminal size={28} className="text-primary" />
+                  <div className="flex items-center gap-2">
+                    {prompt.isPublic ? (
+                      <div className="px-2 py-1 bg-primary/10 text-primary text-[8px] font-bold uppercase tracking-widest flex items-center gap-1">
+                        <Share2 size={10} />
+                        Public
+                      </div>
+                    ) : (
+                      <div className="px-2 py-1 bg-secondary text-muted-foreground text-[8px] font-bold uppercase tracking-widest flex items-center gap-1">
+                        <Lock size={10} />
+                        Internal
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {prompt.isPublic ? (
-                    <div className="px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                      <Share2 size={10} />
-                      Public
-                    </div>
-                  ) : (
-                    <div className="px-2 py-1 rounded-full bg-zinc-500/10 text-zinc-500 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                      <Lock size={10} />
-                      Private
-                    </div>
-                  )}
-                </div>
+                
+                <h3 className="text-xl font-bold mb-3">{prompt.name}</h3>
+                <p className="text-sm text-muted-foreground line-clamp-3 mb-8 leading-relaxed">
+                  {prompt.description || "No operational description provided."}
+                </p>
               </div>
-              
-              <h3 className="text-lg font-bold text-white mb-2">{prompt.name}</h3>
-              <p className="text-sm text-zinc-500 line-clamp-2 mb-6">
-                {prompt.description || "No description provided."}
-              </p>
 
-              <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+              <div className="flex items-center justify-between pt-8 border-t border-border">
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-xs text-zinc-400 hover:text-white gap-2"
+                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary p-0 hover:bg-transparent"
                   onClick={() => copyToClipboard(prompt.prompt)}
                 >
-                  <Copy size={14} />
-                  Copy Prompt
+                  <Copy size={14} className="mr-2" />
+                  Copy Sequence
                 </Button>
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 text-zinc-600 hover:text-red-500"
-                    onClick={() => handleDelete(prompt.id)}
-                  >
-                    <Trash2 size={14} />
-                  </Button>
-                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-10 w-10 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => handleDelete(prompt.id)}
+                >
+                  <Trash2 size={18} />
+                </Button>
               </div>
-
-              {/* Decorative Background */}
-              <Sparkles className="absolute -right-4 -bottom-4 w-24 h-24 text-white/[0.02] pointer-events-none" />
-            </Card>
+            </div>
           ))
         )}
       </div>

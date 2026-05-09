@@ -1,3 +1,5 @@
+"use client"
+
 import { ToolInterface } from "@/components/tools/ToolInterface"
 import { Mail } from "lucide-react"
 

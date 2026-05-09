@@ -1,3 +1,5 @@
+"use client"
+
 import { 
   Users, 
   Plus, 
@@ -11,134 +13,133 @@ import {
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function TeamPage() {
   return (
-    <div className="p-8 h-full overflow-y-auto max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-10">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Team Management</h1>
-          <p className="text-zinc-500 mt-1 text-sm">Manage your workspace members and their permissions.</p>
+    <div className="p-10 h-full overflow-y-auto max-w-7xl mx-auto">
+      <div className="flex items-center justify-between mb-12">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Identity & Access</h1>
+          <p className="text-muted-foreground text-sm">Manage organizational structure, member roles, and system permissions.</p>
         </div>
-        <Button className="ai-gradient border-none gap-2">
-          <UserPlus size={16} />
-          Invite Member
+        <Button className="enterprise-btn h-12 px-8">
+          <UserPlus size={18} />
+          Provision Member
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Members List */}
-        <div className="md:col-span-2 space-y-6">
-          <Card className="glass-dark border-white/5 bg-white/[0.02] overflow-hidden">
-            <div className="p-6 border-b border-white/5 bg-white/[0.01]">
-              <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Active Members</h3>
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-white border border-border">
+            <div className="p-6 border-b border-border bg-secondary/30">
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Workforce Inventory</h3>
             </div>
-            <div className="divide-y divide-white/5">
+            <div className="divide-y divide-border">
               {[
                 { name: "Alex Rivers", email: "alex@aura.ai", role: "Owner", image: "https://github.com/shadcn.png" },
                 { name: "Sarah Chen", email: "sarah@aura.ai", role: "Admin", image: "" },
-                { name: "Michael Scott", email: "michael@aura.ai", role: "Member", image: "" },
+                { name: "Michael Scott", email: "michael@aura.ai", role: "Associate", image: "" },
               ].map((member, i) => (
-                <div key={i} className="p-4 flex items-center justify-between hover:bg-white/[0.01] transition-colors group">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-10 w-10 border border-white/10">
+                <div key={i} className="p-6 flex items-center justify-between hover:bg-secondary/30 transition-colors group">
+                  <div className="flex items-center gap-6">
+                    <Avatar className="h-12 w-12 border border-border rounded-none">
                       <AvatarImage src={member.image} />
-                      <AvatarFallback className="bg-purple-500/10 text-purple-400">
+                      <AvatarFallback className="bg-primary/10 text-primary rounded-none font-bold">
                         {member.name.split(" ").map(n => n[0]).join("")}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="text-sm font-medium text-white flex items-center gap-2">
+                      <div className="text-sm font-bold flex items-center gap-3">
                         {member.name}
                         {member.role === "Owner" && (
-                          <span className="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">
-                            Owner
+                          <span className="text-[8px] bg-primary text-white px-2 py-0.5 font-bold uppercase tracking-widest">
+                            Master
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-zinc-500">{member.email}</div>
+                      <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-1">{member.email}</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-xs text-zinc-600 font-medium">{member.role}</span>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-600 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                      <MoreVertical size={14} />
+                  <div className="flex items-center gap-6">
+                    <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">{member.role}</span>
+                    <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                      <MoreVertical size={18} />
                     </Button>
                   </div>
                 </div>
               ))}
             </div>
-          </Card>
+          </div>
 
           {/* Pending Invites */}
-          <Card className="glass-dark border-white/5 bg-white/[0.02] overflow-hidden">
-            <div className="p-6 border-b border-white/5 bg-white/[0.01]">
-              <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Pending Invites</h3>
+          <div className="bg-white border border-border">
+            <div className="p-6 border-b border-border bg-secondary/30">
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Pending Authorizations</h3>
             </div>
-            <div className="p-4 space-y-4">
+            <div className="p-6 space-y-4">
               {[
-                { email: "david.beck@gmail.com", sent: "2 days ago" },
+                { email: "david.beck@gmail.com", sent: "48 HOURS AGO" },
               ].map((invite, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.01] border border-white/5">
-                  <div className="flex items-center gap-3">
-                    <Mail className="text-zinc-500" size={16} />
+                <div key={i} className="flex items-center justify-between p-4 border border-border bg-secondary/10">
+                  <div className="flex items-center gap-4">
+                    <Mail className="text-primary" size={18} />
                     <div>
-                      <div className="text-sm text-white font-medium">{invite.email}</div>
-                      <div className="text-[10px] text-zinc-600">Sent {invite.sent}</div>
+                      <div className="text-sm font-bold">{invite.email}</div>
+                      <div className="text-[8px] text-muted-foreground font-bold tracking-[0.2em] uppercase mt-1">REQUESTED {invite.sent}</div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-xs text-red-500 hover:text-red-400 hover:bg-red-500/10">
-                    Cancel
+                  <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest text-destructive hover:bg-destructive/5">
+                    Revoke
                   </Button>
                 </div>
               ))}
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Workspace Settings Sidebar */}
-        <div className="space-y-6">
-          <Card className="p-6 glass-dark border-white/5 bg-white/[0.02]">
-            <h3 className="font-bold text-white mb-6">Workspace Overview</h3>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-widest">Workspace Name</Label>
-                <Input value="Aura Enterprise" className="bg-white/5 border-white/5 text-sm h-9" readOnly />
+        <div className="space-y-8">
+          <div className="p-8 border border-border bg-white">
+            <h3 className="font-bold text-lg mb-8">Asset Parameters</h3>
+            <div className="space-y-8">
+              <div className="space-y-3">
+                <Label className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Asset Name</Label>
+                <Input value="Aura Enterprise Instance" className="bg-secondary/20 border-border rounded-none h-12 text-sm font-medium" readOnly />
               </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-widest">Plan</Label>
-                <div className="flex items-center justify-between p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                  <div className="flex items-center gap-2">
-                    <Shield className="text-purple-400" size={16} />
-                    <span className="text-sm font-bold text-white">Enterprise</span>
+              <div className="space-y-3">
+                <Label className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Service Level</Label>
+                <div className="flex items-center justify-between p-4 border border-primary/20 bg-primary/5">
+                  <div className="flex items-center gap-3">
+                    <Shield className="text-primary" size={18} />
+                    <span className="text-xs font-bold uppercase tracking-widest text-primary">Enterprise</span>
                   </div>
-                  <span className="text-[10px] text-purple-400 font-bold underline cursor-pointer">Manage</span>
+                  <span className="text-[10px] text-primary font-bold underline cursor-pointer uppercase tracking-widest">Upgrade</span>
                 </div>
               </div>
             </div>
-            <Button variant="outline" className="w-full mt-8 border-white/5 glass text-xs font-bold uppercase tracking-widest">
-              Workspace Settings
+            <Button variant="outline" className="w-full mt-10 border-border rounded-none h-12 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-secondary">
+              Instance Configurations
             </Button>
-          </Card>
+          </div>
 
-          <Card className="p-6 glass-dark border-white/5 bg-white/[0.02]">
-            <h3 className="font-bold text-white mb-4">Sharing Features</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500">Shared Chats</span>
-                <CheckCircle2 className="text-emerald-500" size={14} />
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500">Global Knowledge</span>
-                <CheckCircle2 className="text-emerald-500" size={14} />
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500">Admin Controls</span>
-                <CheckCircle2 className="text-emerald-500" size={14} />
-              </div>
+          <div className="p-8 border border-border bg-white">
+            <h3 className="font-bold text-lg mb-6">Security Protocol</h3>
+            <div className="space-y-6">
+              {[
+                { label: "Shared Assets", status: true },
+                { label: "Global Context", status: true },
+                { label: "Audit Logging", status: true },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest">
+                  <span className="text-muted-foreground">{item.label}</span>
+                  <CheckCircle2 className="text-primary" size={16} />
+                </div>
+              ))}
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>

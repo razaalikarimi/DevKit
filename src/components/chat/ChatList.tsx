@@ -48,7 +48,7 @@ export const ChatList = () => {
           key={chat.id}
           className={`
             group flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all
-            ${params.id === chat.id ? "bg-purple-500/10 text-purple-400" : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"}
+            ${params.id === chat.id ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"}
           `}
         >
           <div 
@@ -62,7 +62,7 @@ export const ChatList = () => {
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleRename(chat.id)}
-                className="h-6 px-1 py-0 bg-transparent border-none focus-visible:ring-0 text-white"
+                className="h-6 px-1 py-0 bg-transparent border-none focus-visible:ring-0 text-foreground"
               />
             ) : (
               <span className="truncate">{chat.title}</span>

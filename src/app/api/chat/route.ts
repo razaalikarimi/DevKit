@@ -7,6 +7,7 @@ export const maxDuration = 30
 export async function POST(req: Request) {
   const userId = "demo-user-id"
   const { messages, model, personality } = await req.json()
+  console.log("Incoming Messages:", JSON.stringify(messages, null, 2))
 
   // Construct a system message based on personality
   let systemMessage = "You are Aura AI, a helpful enterprise assistant."
@@ -24,11 +25,25 @@ export async function POST(req: Request) {
   // Use the selected model or fallback to Flash
   const selectedModel = model === "gemini-1.5-pro" ? "gemini-1.5-pro" : "gemini-1.5-flash"
 
-  const result = await streamText({
-    model: google(selectedModel),
-    system: systemMessage,
-    messages,
-  })
+  // Map UI messages to CoreMessages for streamText
+  const coreMessages = messages.map((m: any) => ({
+    role: m.role,
+    content: m.parts ? m.parts.map((p: any) => p.text).join("") : m.content
+  }))
 
-  return result.toDataStreamResponse()
+  try {
+    const result = await streamText({
+      model: google(selectedModel),
+      system: systemMessage,
+      messages: coreMessages,
+    })
+
+    return result.toUIMessageStreamResponse()
+  } catch (error) {
+    console.error("Chat API Error:", error)
+    return new Response(JSON.stringify({ error: "Failed to generate response" }), { 
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    })
+  }
 }
