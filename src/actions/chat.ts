@@ -13,6 +13,8 @@ export const createConversation = async (workspaceId?: string) => {
       userId,
       workspaceId,
       title: "New Chat",
+      id: crypto.randomUUID(),
+      updatedAt: new Date(),
     },
   })
 
