@@ -8,10 +8,10 @@ datasource db {
 }
 
 model conversation {
-  id          String     @id
+  id          String     @id @default(cuid())
   title       String?
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime   @updatedAt
   userId      String
   workspaceId String?
   modelId     String     @default("gemini-1.5-flash")
@@ -26,7 +26,7 @@ model conversation {
 }
 
 model document {
-  id              String         @id
+  id              String         @id @default(cuid())
   name            String
   url             String
   key             String
@@ -34,7 +34,7 @@ model document {
   type            String
   status          String         @default("PENDING")
   createdAt       DateTime       @default(now())
-  updatedAt       DateTime
+  updatedAt       DateTime       @updatedAt
   userId          String
   knowledgeBaseId String?
   knowledgebase   knowledgebase? @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade, map: "Document_knowledgeBaseId_fkey")
@@ -45,18 +45,18 @@ model document {
 }
 
 model knowledgebase {
-  id          String     @id
+  id          String     @id @default(cuid())
   name        String
   description String?
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime   @updatedAt
   workspaceId String     @unique(map: "KnowledgeBase_workspaceId_key")
   document    document[]
   workspace   workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade, map: "KnowledgeBase_workspaceId_fkey")
 }
 
 model message {
-  id             String       @id
+  id             String       @id @default(cuid())
   role           String
   content        String       @db.LongText
   tokens         Int?
@@ -68,14 +68,14 @@ model message {
 }
 
 model prompttemplate {
-  id          String   @id
+  id          String   @id @default(cuid())
   name        String
   description String?
   prompt      String   @db.LongText
   tags        String?
   isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   userId      String
   user        user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "PromptTemplate_userId_fkey")
 
@@ -83,7 +83,7 @@ model prompttemplate {
 }
 
 model subscription {
-  id                     String    @id
+  id                     String    @id @default(cuid())
   userId                 String    @unique(map: "Subscription_userId_key")
   stripeCustomerId       String?   @unique(map: "Subscription_stripeCustomerId_key")
   stripeSubscriptionId   String?   @unique(map: "Subscription_stripeSubscriptionId_key")
@@ -92,13 +92,13 @@ model subscription {
 }
 
 model user {
-  id               String            @id
+  id               String            @id @default(cuid())
   email            String            @unique(map: "User_email_key")
   name             String?
   clerkId          String            @unique(map: "User_clerkId_key")
   imageUrl         String?
   createdAt        DateTime          @default(now())
-  updatedAt        DateTime
+  updatedAt        DateTime          @updatedAt
   plan             String            @default("FREE")
   stripeCustomerId String?           @unique(map: "User_stripeCustomerId_key")
   credits          Int               @default(1000)
@@ -109,25 +109,25 @@ model user {
 }
 
 model workspace {
-  id              String            @id
+  id              String            @id @default(cuid())
   name            String
   slug            String            @unique(map: "Workspace_slug_key")
   imageUrl        String?
   inviteCode      String            @unique(map: "Workspace_inviteCode_key")
   createdAt       DateTime          @default(now())
-  updatedAt       DateTime
+  updatedAt       DateTime          @updatedAt
   conversation    conversation[]
   knowledgebase   knowledgebase?
   workspacemember workspacemember[]
 }
 
 model workspacemember {
-  id          String    @id
+  id          String    @id @default(cuid())
   role        String    @default("MEMBER")
   userId      String
   workspaceId String
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime  @updatedAt
   user        user      @relation(fields: [userId], references: [id], onDelete: Cascade, map: "WorkspaceMember_userId_fkey")
   workspace   workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade, map: "WorkspaceMember_workspaceId_fkey")
 
