@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 
 export const createConversation = async (workspaceId?: string) => {
+  // Use a fallback for the demo user if session is not active
   const userId = "demo-user-id"
 
   const conversation = await db.conversation.create({
