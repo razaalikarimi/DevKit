@@ -12,7 +12,8 @@ import {
   Star,
   Settings,
   Sparkles,
-  Zap
+  Zap,
+  GitBranch
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -34,6 +35,7 @@ export const Sidebar = () => {
     { label: "Overview", icon: LayoutDashboard, href: "/dashboard" },
     { label: "AI Tools", icon: Zap, href: "/tools" },
     { label: "Knowledge", icon: FolderOpen, href: "/knowledge" },
+    { label: "RepoMind AI", icon: GitBranch, href: "/repomind" },
     { label: "Prompts", icon: Star, href: "/prompts" },
     { label: "Team", icon: Users, href: "/team" },
     { label: "Billing", icon: CreditCard, href: "/billing" },

@@ -32,13 +32,38 @@ export async function POST(req: Request) {
   }))
 
   try {
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
+    
+    // DEMO MODE: If no real key is provided, stream a mock response
+    if (!apiKey || apiKey.startsWith("AIza...")) {
+      const mockText = "This is a simulated AI response. Your UI and backend are fully functional! To get real AI generation, please provide a valid GOOGLE_GENERATIVE_AI_API_KEY in the .env file.";
+      
+      const stream = new ReadableStream({
+        async start(controller) {
+          const encoder = new TextEncoder();
+          const words = mockText.split(" ");
+          
+          for (let i = 0; i < words.length; i++) {
+            // Vercel AI SDK Data Stream format: 0:text
+            controller.enqueue(encoder.encode(`0:"${words[i]} "\n`));
+            await new Promise(r => setTimeout(r, 50));
+          }
+          controller.close();
+        }
+      });
+      
+      return new Response(stream, {
+        headers: { "Content-Type": "text/plain; charset=utf-8", "x-vercel-ai-data-stream": "v1" }
+      });
+    }
+
     const result = await streamText({
       model: google(selectedModel),
       system: systemMessage,
       messages: coreMessages,
     })
 
-    return result.toUIMessageStreamResponse()
+    return result.toDataStreamResponse()
   } catch (error) {
     console.error("Chat API Error:", error)
     return new Response(JSON.stringify({ error: "Failed to generate response" }), { 

@@ -10,6 +10,7 @@ import {
   Database,
   Cpu
 } from "lucide-react"
+import Link from "next/link"
 
 const FEATURES = [
   {
@@ -48,22 +49,21 @@ export const Features = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1">
           {FEATURES.map((feature, i) => (
-            <div 
-              key={i} 
-              className="enterprise-card h-full flex flex-col justify-between group cursor-pointer"
-            >
-              <div className="space-y-6">
-                <feature.icon className="text-primary" size={32} />
-                <h4 className="text-xl font-bold group-hover:text-primary transition-colors">{feature.title}</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {feature.description}
-                </p>
+            <Link key={i} href="/dashboard">
+              <div className="enterprise-card h-full flex flex-col justify-between group cursor-pointer hover:border-primary transition-all">
+                <div className="space-y-6">
+                  <feature.icon className="text-primary" size={32} />
+                  <h4 className="text-xl font-bold group-hover:text-primary transition-colors">{feature.title}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+                <div className="pt-8 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                  Learn more
+                  <div className="w-8 h-[1px] bg-primary" />
+                </div>
               </div>
-              <div className="pt-8 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                Learn more
-                <div className="w-8 h-[1px] bg-primary" />
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

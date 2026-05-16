@@ -26,9 +26,11 @@ export const Hero = () => {
                 <ArrowRight size={18} />
               </Button>
             </Link>
-            <Button variant="outline" className="h-14 px-8 rounded-none border-border hover:bg-secondary text-sm uppercase tracking-widest font-bold">
-              View Solutions
-            </Button>
+            <Link href="#solutions">
+              <Button variant="outline" className="h-14 px-8 rounded-none border-border hover:bg-secondary text-sm uppercase tracking-widest font-bold">
+                View Solutions
+              </Button>
+            </Link>
           </div>
           
           <div className="grid grid-cols-3 gap-8 pt-12 border-t border-border">

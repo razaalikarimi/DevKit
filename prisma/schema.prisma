@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -58,7 +58,7 @@ model KnowledgeBase {
 model Message {
   id             String       @id @default(cuid())
   role           String
-  content        String       @db.LongText
+  content        String       
   tokens         Int?
   createdAt      DateTime     @default(now())
   conversationId String
@@ -71,7 +71,7 @@ model PromptTemplate {
   id          String   @id @default(cuid())
   name        String
   description String?
-  prompt      String   @db.LongText
+  prompt      String   
   tags        String?
   isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -106,6 +106,8 @@ model User {
   document         Document[]
   prompttemplate   PromptTemplate[]
   workspacemember  WorkspaceMember[]
+  repository       Repository[]
+  repositoryAgentRun RepositoryAgentRun[]
 }
 
 model Workspace {
@@ -119,6 +121,7 @@ model Workspace {
   conversation    Conversation[]
   knowledgebase   KnowledgeBase?
   workspacemember WorkspaceMember[]
+  repository      Repository[]
 }
 
 model WorkspaceMember {
@@ -133,4 +136,148 @@ model WorkspaceMember {
 
   @@unique([userId, workspaceId])
   @@index([workspaceId])
+}
+
+model Repository {
+  id              String         @id @default(cuid())
+  name            String
+  fullName        String         @unique
+  url             String
+  description     String?
+  language        String?
+  defaultBranch   String         @default("main")
+  isPrivate       Boolean        @default(false)
+  status          String         @default("PENDING")
+  githubId        Int?           @unique
+  ownerId         String
+  workspaceId     String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  owner           User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  workspace       Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  files           RepositoryFile[]
+  analyses        RepositoryAnalysis[]
+  agentRuns       RepositoryAgentRun[]
+  pullRequests    PullRequestReview[]
+  securityReports SecurityReport[]
+  architectureMaps ArchitectureMap[]
+
+  @@index([ownerId])
+  @@index([workspaceId])
+}
+
+model RepositoryFile {
+  id              String         @id @default(cuid())
+  path            String
+  name            String
+  content         String         
+  language        String?
+  size            Int
+  sha             String?
+  repositoryId    String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  repository      Repository     @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  chunks          RepositoryChunk[]
+
+  @@unique([repositoryId, path])
+  @@index([repositoryId])
+}
+
+model RepositoryChunk {
+  id              String         @id @default(cuid())
+  fileId          String
+  content         String         
+  startLine       Int
+  endLine         Int
+  createdAt       DateTime       @default(now())
+
+  file            RepositoryFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  embedding       RepositoryEmbedding?
+
+  @@index([fileId])
+}
+
+model RepositoryEmbedding {
+  id              String         @id @default(cuid())
+  chunkId         String         @unique
+  vectorId        String
+  createdAt       DateTime       @default(now())
+
+  chunk           RepositoryChunk @relation(fields: [chunkId], references: [id], onDelete: Cascade)
+}
+
+model RepositoryAnalysis {
+  id              String         @id @default(cuid())
+  repositoryId    String
+  type            String
+  content         String         
+  createdAt       DateTime       @default(now())
+
+  repository      Repository     @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  @@index([repositoryId])
+}
+
+model RepositoryAgentRun {
+  id              String         @id @default(cuid())
+  repositoryId    String
+  userId          String
+  task            String         
+  status          String         @default("RUNNING")
+  result          String?        
+  tokensUsed      Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  repository      Repository     @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([repositoryId])
+  @@index([userId])
+}
+
+model PullRequestReview {
+  id              String         @id @default(cuid())
+  repositoryId    String
+  prNumber        Int
+  title           String
+  status          String         @default("PENDING")
+  summary         String?        
+  riskScore       Int?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  repository      Repository     @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  @@unique([repositoryId, prNumber])
+  @@index([repositoryId])
+}
+
+model SecurityReport {
+  id              String         @id @default(cuid())
+  repositoryId    String
+  status          String         @default("PENDING")
+  report          String?        
+  vulnerabilities Int            @default(0)
+  createdAt       DateTime       @default(now())
+
+  repository      Repository     @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  @@index([repositoryId])
+}
+
+model ArchitectureMap {
+  id              String         @id @default(cuid())
+  repositoryId    String
+  name            String
+  mermaidGraph    String         
+  createdAt       DateTime       @default(now())
+
+  repository      Repository     @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  @@index([repositoryId])
 }

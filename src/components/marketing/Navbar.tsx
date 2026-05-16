@@ -15,9 +15,9 @@ export const Navbar = () => {
         
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
           <Link href="#solutions" className="hover:text-primary transition-colors">Solutions</Link>
-          <Link href="#platform" className="hover:text-primary transition-colors">Platform</Link>
-          <Link href="#developers" className="hover:text-primary transition-colors">Developers</Link>
-          <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
+          <Link href="/dashboard" className="hover:text-primary transition-colors">Platform</Link>
+          <Link href="/tools" className="hover:text-primary transition-colors">Developers</Link>
+          <Link href="/billing" className="hover:text-primary transition-colors">Pricing</Link>
         </div>
       </div>
 
@@ -25,9 +25,11 @@ export const Navbar = () => {
         <Link href="/dashboard" className="text-sm font-bold hover:text-primary transition-colors">
           Log in
         </Link>
-        <Button className="enterprise-btn rounded-none h-10 px-6 text-xs uppercase tracking-widest font-bold">
-          Get Started
-        </Button>
+        <Link href="/dashboard">
+          <Button className="enterprise-btn rounded-none h-10 px-6 text-xs uppercase tracking-widest font-bold">
+            Get Started
+          </Button>
+        </Link>
       </div>
     </nav>
   )
