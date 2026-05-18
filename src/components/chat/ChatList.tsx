@@ -31,7 +31,7 @@ export const ChatList = () => {
   const handleDelete = async (id: string) => {
     await deleteConversation(id)
     setConversations(conversations.filter(c => c.id !== id))
-    if (params.id === id) router.push("/chat")
+    if (params.chatId === id) router.push("/chat")
   }
 
   const handleRename = async (id: string) => {
@@ -48,7 +48,7 @@ export const ChatList = () => {
           key={chat.id}
           className={`
             group flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all
-            ${params.id === chat.id ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"}
+            ${params.chatId === chat.id ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"}
           `}
         >
           <div 

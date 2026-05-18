@@ -5,8 +5,8 @@ import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 
 export const createConversation = async (workspaceId?: string) => {
-  // Use a fallback for the demo user if session is not active
-  const userId = "demo-user-id"
+  const { userId: clerkId } = await auth()
+  const userId = clerkId || "demo-user-id"
 
   const conversation = await db.conversation.create({
     data: {
@@ -23,7 +23,8 @@ export const createConversation = async (workspaceId?: string) => {
 }
 
 export const getConversations = async (workspaceId?: string) => {
-  const userId = "demo-user-id"
+  const { userId: clerkId } = await auth()
+  const userId = clerkId || "demo-user-id"
 
   return await db.conversation.findMany({
     where: {
@@ -38,7 +39,8 @@ export const getConversations = async (workspaceId?: string) => {
 }
 
 export const renameConversation = async (id: string, title: string) => {
-  const userId = "demo-user-id"
+  const { userId: clerkId } = await auth()
+  const userId = clerkId || "demo-user-id"
 
   await db.conversation.update({
     where: { id, userId },
@@ -49,7 +51,8 @@ export const renameConversation = async (id: string, title: string) => {
 }
 
 export const deleteConversation = async (id: string) => {
-  const userId = "demo-user-id"
+  const { userId: clerkId } = await auth()
+  const userId = clerkId || "demo-user-id"
 
   await db.conversation.delete({
     where: { id, userId },

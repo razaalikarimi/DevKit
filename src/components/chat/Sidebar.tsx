@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { 
@@ -22,13 +23,28 @@ import { ChatList } from "./ChatList"
 import { createConversation } from "@/actions/chat"
 import { useRouter } from "next/navigation"
 
+import { toast } from "sonner"
+
 export const Sidebar = () => {
   const pathname = usePathname()
   const router = useRouter()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const handleNewChat = async () => {
-    const chat = await createConversation()
-    router.push(`/chat/${chat.id}`)
+    try {
+      const chat = await createConversation()
+      if (chat && chat.id) {
+        router.push(`/chat/${chat.id}`)
+        toast.success("New conversation started.")
+      }
+    } catch (error) {
+      console.error("Failed to create conversation:", error)
+      toast.error("Failed to initialize new conversation.")
+    }
   }
 
   const routes = [
@@ -41,13 +57,17 @@ export const Sidebar = () => {
     { label: "Billing", icon: CreditCard, href: "/billing" },
   ]
 
+  if (!isMounted) return null
+
   return (
-    <div className="w-[260px] h-full flex flex-col bg-slate-50/50 border-r border-border">
+    <div className="flex w-[260px] h-full flex-col bg-white border-r border-border flex-shrink-0">
       {/* Brand */}
-      <div className="h-16 px-6 flex items-center gap-3">
-        <Sparkles className="text-primary w-5 h-5" />
-        <span className="font-bold text-foreground tracking-tight text-lg">Aura</span>
-      </div>
+      <Link href="/">
+        <div className="h-16 px-6 flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
+          <Sparkles className="text-primary w-5 h-5" />
+          <span className="font-bold text-foreground tracking-tight text-lg">Aura</span>
+        </div>
+      </Link>
 
       <div className="px-4 py-2">
         <Button 
@@ -96,7 +116,12 @@ export const Sidebar = () => {
               <span className="text-[10px] text-muted-foreground">Premium</span>
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            onClick={() => toast.info("Settings interface is under maintenance.")}
+          >
             <Settings size={16} />
           </Button>
         </div>

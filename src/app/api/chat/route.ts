@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       messages: coreMessages,
     })
 
-    return result.toDataStreamResponse()
+    return (result as any).toDataStreamResponse()
   } catch (error) {
     console.error("Chat API Error:", error)
     return new Response(JSON.stringify({ error: "Failed to generate response" }), { 

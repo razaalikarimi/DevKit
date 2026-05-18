@@ -6,10 +6,7 @@ import {
   Send, 
   User, 
   Bot, 
-  Copy, 
-  RotateCcw, 
   StopCircle,
-  ChevronDown,
   Brain,
   Zap,
   MoreHorizontal
@@ -17,17 +14,45 @@ import {
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { motion, AnimatePresence } from "framer-motion"
+import { useParams } from "next/navigation"
 import { toast } from "sonner"
 
 export const ChatWindow = () => {
-  const [input, setInput] = useState("")
-  const { messages, status, sendMessage, stop, regenerate } = useChat({
-    // @ts-ignore
-    api: "/api/chat",
-  } as any)
+  const params = useParams()
+  const chatId = params.chatId as string
+  const [isMounted, setIsMounted] = useState(false)
 
-  const isLoading = status !== "ready"
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+  
+  const chatHelpers = useChat({
+    id: chatId,
+    api: "/api/chat",
+    body: {
+      chatId,
+      personality: "Professional",
+      model: "gemini-1.5-flash"
+    },
+    onResponse: (response: any) => {
+      if (!response.ok) {
+        toast.error("Failed to connect to AI neural link.")
+      }
+    },
+  } as any) as any
+
+  const { messages, input, handleInputChange, handleSubmit, append, setInput, isLoading, stop, reload } = chatHelpers
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (typeof handleSubmit === 'function') {
+      handleSubmit(e);
+    } else if (typeof append === 'function') {
+      append({ role: 'user', content: input });
+      if (typeof setInput === 'function') setInput('');
+    }
+  };
+
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -36,17 +61,11 @@ export const ChatWindow = () => {
     }
   }, [messages])
 
+  if (!isMounted) return null
+
   const copyToClipboard = (content: string) => {
     navigator.clipboard.writeText(content)
     toast.success("Asset copied to clipboard.")
-  }
-
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault()
-    if (!input.trim() || isLoading) return
-    
-    sendMessage({ text: input })
-    setInput("")
   }
 
   return (
@@ -90,7 +109,7 @@ export const ChatWindow = () => {
             </div>
           )}
 
-          {messages.map((m) => (
+          {messages.map((m: any) => (
             <div key={m.id} className={`flex gap-6 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
               <div className={`w-10 h-10 flex items-center justify-center shrink-0 ${
                 m.role === "user" ? "bg-primary text-white" : "bg-secondary text-primary border border-border"
@@ -103,31 +122,18 @@ export const ChatWindow = () => {
                     ? "bg-primary text-white border-primary" 
                     : "bg-white text-foreground border-border"
                 }`}>
-                  {m.parts ? (
-                    m.parts.map((part: any, i: number) => (
-                      <div key={i}>
-                        {part.type === 'text' && part.text}
-                        {part.type === 'tool-invocation' && (
-                          <div className="mt-4 p-4 bg-secondary/50 border border-border italic text-xs">
-                            Running {part.toolInvocation.toolName}...
-                          </div>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    (m as any).content || ""
-                  )}
+                  {m.content || ""}
                 </div>
                 {m.role !== "user" && (
                   <div className="flex items-center gap-4 px-1">
                     <button 
-                      onClick={() => copyToClipboard(m.parts?.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('') || (m as any).content || "")} 
+                      onClick={() => copyToClipboard(m.content || "")} 
                       className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
                     >
                       Copy Asset
                     </button>
                     <button 
-                      onClick={() => regenerate()} 
+                      onClick={() => reload()} 
                       className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
                     >
                       Regenerate
@@ -154,16 +160,17 @@ export const ChatWindow = () => {
 
       {/* Input */}
       <div className="p-10 bg-white border-t border-border">
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto relative">
+        <form onSubmit={onSubmit} className="max-w-4xl mx-auto relative">
           <Textarea
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInputChange}
             placeholder="Enter operational prompt..."
             className="min-h-[60px] max-h-[200px] w-full bg-secondary/20 border-border focus-visible:ring-1 focus-visible:ring-primary rounded-none pr-32 py-4 resize-none text-sm leading-relaxed"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault()
-                handleSubmit()
+                // @ts-ignore
+                onSubmit(e)
               }
             }}
           />
@@ -174,7 +181,7 @@ export const ChatWindow = () => {
                 Terminate
               </Button>
             ) : (
-              <Button type="submit" size="sm" disabled={!input.trim()} className="enterprise-btn h-10 px-6 font-bold text-[10px] uppercase tracking-widest">
+              <Button type="submit" size="sm" disabled={!input || !input.trim()} className="enterprise-btn h-10 px-6 font-bold text-[10px] uppercase tracking-widest">
                 <Send size={14} className="mr-2" />
                 Send
               </Button>
