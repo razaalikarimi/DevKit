@@ -3,8 +3,11 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sparkles, Menu } from "lucide-react"
+import { useUser, UserButton, SignInButton } from "@clerk/nextjs"
 
 export const Navbar = () => {
+  const { isSignedIn, isLoaded } = useUser()
+
   return (
     <nav className="h-16 border-b border-border bg-white sticky top-0 z-50 px-6 md:px-12 flex items-center justify-between">
       <div className="flex items-center gap-12">
@@ -21,15 +24,28 @@ export const Navbar = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Link href="/dashboard" className="text-sm font-bold hover:text-primary transition-colors">
-          Log in
-        </Link>
-        <Link href="/dashboard">
-          <Button className="enterprise-btn rounded-none h-10 px-6 text-xs uppercase tracking-widest font-bold">
-            Get Started
-          </Button>
-        </Link>
+      <div className="flex items-center gap-6">
+        {!isLoaded ? (
+          <div className="w-20 h-8 bg-secondary animate-pulse" />
+        ) : !isSignedIn ? (
+          <>
+            <Link href="/sign-in" className="text-sm font-bold hover:text-primary transition-colors">
+              Log in
+            </Link>
+            <Link href="/sign-up">
+              <Button className="enterprise-btn rounded-none h-10 px-6 text-xs uppercase tracking-widest font-bold">
+                Get Started
+              </Button>
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link href="/dashboard" className="text-sm font-bold hover:text-primary transition-colors">
+              Dashboard
+            </Link>
+            <UserButton />
+          </>
+        )}
       </div>
     </nav>
   )
