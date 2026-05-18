@@ -7,6 +7,7 @@ import {
   Activity, 
 } from "lucide-react"
 import { Card } from "@/components/ui/card"
+import Link from "next/link"
 
 export default function DashboardPage() {
   return (
@@ -18,18 +19,20 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
         {[
-          { label: "Tokens Used", value: "1.2M", icon: Zap },
-          { label: "Active Chats", value: "248", icon: MessageSquare },
-          { label: "Team Members", value: "12", icon: Users },
-          { label: "System Status", value: "Healthy", icon: Activity },
+          { label: "Tokens Used", value: "1.2M", icon: Zap, href: "/billing" },
+          { label: "Active Chats", value: "248", icon: MessageSquare, href: "/chat" },
+          { label: "Team Members", value: "12", icon: Users, href: "/team" },
+          { label: "System Status", value: "Healthy", icon: Activity, href: "/dashboard" },
         ].map((stat, i) => (
-          <div key={i} className="p-6 bg-secondary/50 border border-border rounded-xl">
+          <Link key={i} href={stat.href}>
+            <div className="p-6 bg-secondary/50 border border-border rounded-xl hover:bg-secondary/80 transition-all cursor-pointer">
             <div className="flex items-center gap-3 mb-4 text-muted-foreground">
               <stat.icon size={18} />
               <span className="text-xs font-bold uppercase tracking-widest">{stat.label}</span>
             </div>
             <div className="text-2xl font-bold">{stat.value}</div>
           </div>
+        </Link>
         ))}
       </div>
 

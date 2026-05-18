@@ -5,14 +5,16 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Terminal, MessageSquare, GitBranch, ShieldAlert, Cpu } from "lucide-react";
 
-export default async function RepoDetailLayout({
+import * as React from "react";
+
+export default function RepoDetailLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
   params: Promise<{ repoId: string }>;
 }) {
-  const resolvedParams = await params;
+  const resolvedParams = React.use(params);
   const params_repoId = resolvedParams.repoId;
   const pathname = usePathname();
   const baseUrl = `/repomind/${params_repoId}`;

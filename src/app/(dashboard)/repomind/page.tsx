@@ -1,9 +1,12 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Terminal, Plus, Search, GitBranch, ShieldAlert, Cpu } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 export default function RepoMindDashboard() {
   // Mock data for initial UI setup
@@ -38,11 +41,17 @@ export default function RepoMindDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">
+          <Button 
+            variant="outline"
+            onClick={() => toast.success("GitHub repository synchronization started.")}
+          >
             <Terminal className="mr-2 h-4 w-4" />
             Sync GitHub
           </Button>
-          <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+          <Button 
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            onClick={() => toast.info("GitHub OAuth flow is being initialized.")}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Connect Repository
           </Button>
