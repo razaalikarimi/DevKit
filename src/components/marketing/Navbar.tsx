@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sparkles, Menu } from "lucide-react"
-import { useUser, UserButton, SignInButton } from "@clerk/nextjs"
+import { useUser, UserButton, SignInButton } from "@/lib/mock-clerk"
 
 export const Navbar = () => {
   const { isSignedIn, isLoaded } = useUser()
