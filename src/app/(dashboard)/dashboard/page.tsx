@@ -12,9 +12,40 @@ import Link from "next/link"
 export default function DashboardPage() {
   return (
     <div className="p-10 h-full overflow-y-auto max-w-6xl">
+      <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Overview</h1>
+          <p className="text-muted-foreground text-sm">Monitor your platform's performance and usage.</p>
+        </div>
+        <div className="px-4 py-2 bg-primary/10 border border-primary/20 text-primary text-xs font-semibold rounded-lg flex items-center gap-2">
+          <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+          <span>Demo Mode Unlocked</span>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
       <div className="mb-12">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Overview</h1>
-        <p className="text-muted-foreground">Monitor your platform's performance and usage.</p>
+        <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-6">Quick Start Launchpad</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { title: "💬 Open AI Chat", desc: "Interact with the core generative AI model.", href: "/chat" },
+            { title: "⚡ AI Tools Directory", desc: "Generate blogs, emails, and tailored assets.", href: "/tools" },
+            { title: "📂 Knowledge Hub", desc: "Feed custom files & documents to the AI.", href: "/knowledge" },
+            { title: "🌿 RepoMind AI", desc: "Map and audit your code repositories.", href: "/repomind" }
+          ].map((action, i) => (
+            <Link key={i} href={action.href}>
+              <div className="p-6 bg-white border border-border rounded-xl hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between h-full group">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{action.title}</h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{action.desc}</p>
+                </div>
+                <div className="text-[10px] font-bold text-primary uppercase tracking-widest pt-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Launch →
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
