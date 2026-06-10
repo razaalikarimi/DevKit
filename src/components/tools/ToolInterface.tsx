@@ -43,14 +43,13 @@ export const ToolInterface = ({
   const [copied, setCopied] = useState(false)
 
   const { messages, sendMessage, status, setMessages } = useChat({
-    // @ts-ignore
     api: "/api/chat",
-  } as any)
+  } as any) as any
 
-  const isLoading = status !== "ready"
+  const isLoading = status === "streaming" || status === "submitted"
   const lastMessage = messages[messages.length - 1]
   const result = lastMessage?.role === "assistant" 
-    ? (lastMessage.parts ? lastMessage.parts.map((p: any) => p.text).join("") : (lastMessage as any).content || "")
+    ? lastMessage.content || ""
     : ""
 
   const handleGenerate = async (e: React.FormEvent) => {
