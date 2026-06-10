@@ -13,8 +13,8 @@ export default function RepoMindDashboard() {
   const repositories = [
     {
       id: "repo_1",
-      name: "aura-ai-saas",
-      fullName: "acme-corp/aura-ai-saas",
+      name: "devkit-ai-saas",
+      fullName: "acme-corp/devkit-ai-saas",
       language: "TypeScript",
       status: "READY",
       lastScan: "2 hours ago",
