@@ -10,7 +10,7 @@ export const Footer = () => {
           <div className="col-span-2">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-5 h-5 bg-primary" />
-              <span className="text-lg font-bold tracking-tighter uppercase">Aura</span>
+              <span className="text-lg font-bold tracking-tighter uppercase">DevKit</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
               Global leader in enterprise AI solutions. Empowering organizations with next-generation intelligence.
@@ -40,7 +40,7 @@ export const Footer = () => {
         
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
-            © 2026 Aura AI Corporation. All rights reserved.
+            © 2026 DevKit AI Corporation. All rights reserved.
           </p>
           <div className="flex gap-8 text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
             <Link href="#" className="hover:text-primary">Privacy Policy</Link>
