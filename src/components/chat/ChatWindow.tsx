@@ -41,16 +41,24 @@ export const ChatWindow = () => {
     },
   } as any) as any
 
-  const { messages, input, handleInputChange, handleSubmit, append, setInput, isLoading, stop, reload } = chatHelpers
+  const { messages, sendMessage, status, stop, regenerate } = chatHelpers
+  const [input, setInput] = useState("")
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+  }
+
+  const isLoading = status === "streaming" || status === "submitted"
+
+  const reload = () => {
+    regenerate()
+  }
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (typeof handleSubmit === 'function') {
-      handleSubmit(e);
-    } else if (typeof append === 'function') {
-      append({ role: 'user', content: input });
-      if (typeof setInput === 'function') setInput('');
-    }
+    if (!input.trim() || isLoading) return;
+    sendMessage({ text: input });
+    setInput("");
   };
 
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -190,7 +198,7 @@ export const ChatWindow = () => {
         </form>
         <div className="max-w-4xl mx-auto mt-4 flex items-center justify-between">
           <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            Identity: {process.env.NEXT_PUBLIC_APP_NAME || "AURA"} v1.0.0
+            Identity: {process.env.NEXT_PUBLIC_APP_NAME || "DEVKIT"} v1.0.0
           </div>
           <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
             Security: TLS 1.3 / AES-256
