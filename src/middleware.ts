@@ -7,7 +7,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/chat(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, request) => {
+export default clerkMiddleware(async (auth: any, request: any) => {
   // Demo mode
 });
 
