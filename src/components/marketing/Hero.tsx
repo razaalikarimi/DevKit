@@ -17,12 +17,12 @@ export const Hero = () => {
             <span className="text-primary italic">of AI intelligence.</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-xl leading-relaxed">
-            Scalable, secure, and integrated AI solutions designed for the modern enterprise. Automate workflows and unlock insights with Aura.
+            Scalable, secure, and integrated AI solutions designed for the modern enterprise. Automate workflows and unlock insights with DevKit.
           </p>
           <div className="flex flex-wrap gap-4 pt-4">
             <Link href="/dashboard">
               <Button className="enterprise-btn h-14 px-8 text-sm uppercase tracking-widest font-bold">
-                Experience Aura
+                Experience DevKit
                 <ArrowRight size={18} />
               </Button>
             </Link>
