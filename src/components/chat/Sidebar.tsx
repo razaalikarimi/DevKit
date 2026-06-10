@@ -65,7 +65,7 @@ export const Sidebar = () => {
       <Link href="/">
         <div className="h-16 px-6 flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
           <Sparkles className="text-primary w-5 h-5" />
-          <span className="font-bold text-foreground tracking-tight text-lg">Aura</span>
+          <span className="font-bold text-foreground tracking-tight text-lg">DevKit</span>
         </div>
       </Link>
 
