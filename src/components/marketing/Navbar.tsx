@@ -13,7 +13,7 @@ export const Navbar = () => {
       <div className="flex items-center gap-12">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-6 h-6 bg-primary" />
-          <span className="text-xl font-bold tracking-tighter uppercase">Aura</span>
+          <span className="text-xl font-bold tracking-tighter uppercase">DevKit</span>
         </Link>
         
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
