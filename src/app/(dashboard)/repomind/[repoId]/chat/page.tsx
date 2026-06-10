@@ -12,7 +12,7 @@ export default function RepoChat() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Hi! I'm your RepoMind Agent. I've indexed `acme-corp/aura-ai-saas`. What would you like to know about the codebase?",
+      content: "Hi! I'm your RepoMind Agent. I've indexed `acme-corp/devkit-ai-saas`. What would you like to know about the codebase?",
       status: "done"
     }
   ]);
@@ -136,7 +136,7 @@ export default function RepoChat() {
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-4 font-mono text-[10px] text-muted-foreground">
             <div className="text-green-500">[System] RepoMind Orchestrator initialized.</div>
-            <div>[VectorDB] Connected to Pinecone. Index: 'aura-ai-saas'.</div>
+            <div>[VectorDB] Connected to Pinecone. Index: 'devkit-ai-saas'.</div>
             <div>[Agent] Waiting for user input...</div>
             {isTyping && (
               <>

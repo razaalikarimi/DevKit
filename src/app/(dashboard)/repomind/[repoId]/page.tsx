@@ -8,7 +8,7 @@ export default function RepoOverview() {
     <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">acme-corp / aura-ai-saas</h1>
+          <h1 className="text-3xl font-bold">acme-corp / devkit-ai-saas</h1>
           <p className="text-muted-foreground mt-1">
             Last indexed 2 hours ago • 1.2M lines of TypeScript
           </p>
