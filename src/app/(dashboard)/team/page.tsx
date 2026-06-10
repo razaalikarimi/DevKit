@@ -39,9 +39,9 @@ export default function TeamPage() {
             </div>
             <div className="divide-y divide-border">
               {[
-                { name: "Alex Rivers", email: "alex@aura.ai", role: "Owner", image: "https://github.com/shadcn.png" },
-                { name: "Sarah Chen", email: "sarah@aura.ai", role: "Admin", image: "" },
-                { name: "Michael Scott", email: "michael@aura.ai", role: "Associate", image: "" },
+                { name: "Alex Rivers", email: "alex@devkit.ai", role: "Owner", image: "https://github.com/shadcn.png" },
+                { name: "Sarah Chen", email: "sarah@devkit.ai", role: "Admin", image: "" },
+                { name: "Michael Scott", email: "michael@devkit.ai", role: "Associate", image: "" },
               ].map((member, i) => (
                 <div key={i} className="p-6 flex items-center justify-between hover:bg-secondary/30 transition-colors group">
                   <div className="flex items-center gap-6">
@@ -107,7 +107,7 @@ export default function TeamPage() {
             <div className="space-y-8">
               <div className="space-y-3">
                 <Label className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Asset Name</Label>
-                <Input value="Aura Enterprise Instance" className="bg-secondary/20 border-border rounded-none h-12 text-sm font-medium" readOnly />
+                <Input value="DevKit Enterprise Instance" className="bg-secondary/20 border-border rounded-none h-12 text-sm font-medium" readOnly />
               </div>
               <div className="space-y-3">
                 <Label className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Service Level</Label>
