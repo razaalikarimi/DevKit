@@ -1,6 +1,6 @@
-# 🌌 Aura AI - Next-Generation AI SaaS Platform
+# 🌌 DevKit AI - Next-Generation AI SaaS Platform
 
-Aura AI is a premium, enterprise-grade SaaS platform designed to streamline AI workflows, generate high-converting content, manage knowledge bases, map code repository architectures, and optimize developer prompts.
+DevKit AI is a premium, enterprise-grade SaaS platform designed to streamline AI workflows, generate high-converting content, manage knowledge bases, map code repository architectures, and optimize developer prompts.
 
 ---
 
