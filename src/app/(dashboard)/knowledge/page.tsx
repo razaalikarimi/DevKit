@@ -109,7 +109,7 @@ export default function KnowledgePage() {
             <FileUp size={48} className="text-primary mb-6" />
             <h3 className="text-xl font-bold mb-2">Upload Data Sources</h3>
             <p className="text-muted-foreground text-sm max-w-sm">
-              Drag and drop PDF, DOCX, or TXT files. Aura indexes your data for instant retrieval.
+              Drag and drop PDF, DOCX, or TXT files. DevKit indexes your data for instant retrieval.
             </p>
           </div>
 
@@ -198,7 +198,7 @@ export default function KnowledgePage() {
           <div className="p-8 border border-border bg-primary text-white">
             <h3 className="font-bold text-lg mb-4">Enterprise RAG</h3>
             <p className="text-sm text-white/80 leading-relaxed mb-8">
-              Aura utilizes high-performance vector indexing to provide your AI with secure, real-time access to your organization's unique knowledge base.
+              DevKit utilizes high-performance vector indexing to provide your AI with secure, real-time access to your organization's unique knowledge base.
             </p>
             <div className="h-[1px] bg-white/20 w-full mb-8" />
             <div className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">
