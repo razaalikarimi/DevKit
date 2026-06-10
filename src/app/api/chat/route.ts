@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   console.log("Incoming Messages:", JSON.stringify(messages, null, 2))
 
   // Construct a system message based on personality
-  let systemMessage = "You are Aura AI, a helpful enterprise assistant."
+  let systemMessage = "You are DevKit AI, a helpful enterprise assistant."
   
   if (personality === "Professional") {
     systemMessage = "You are a highly professional enterprise AI assistant. Use a formal tone, be concise, and focus on business value."
