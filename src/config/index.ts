@@ -1,10 +1,10 @@
 export const SITE_CONFIG = {
-  name: "Aura AI",
+  name: "DevKit AI",
   description: "Next-Generation AI SaaS Platform",
   url: process.env.NEXT_PUBLIC_APP_URL,
   links: {
-    twitter: "https://twitter.com/aura_ai",
-    github: "https://github.com/aura_ai",
+    twitter: "https://twitter.com/devkit_ai",
+    github: "https://github.com/devkit_ai",
   },
 }
 
