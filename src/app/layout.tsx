@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aura AI | Next-Generation AI SaaS Platform",
-  description: "Experience the future of AI with Aura. Chat, generate content, and automate workflows with enterprise-grade AI.",
+  title: "DevKit AI | Next-Generation AI SaaS Platform",
+  description: "Experience the future of AI with DevKit. Chat, generate content, and automate workflows with enterprise-grade AI.",
 };
 
 export default function RootLayout({
