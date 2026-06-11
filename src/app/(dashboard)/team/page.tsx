@@ -18,24 +18,29 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function TeamPage() {
   return (
-    <div className="p-10 h-full overflow-y-auto max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-12">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Identity & Access</h1>
-          <p className="text-muted-foreground text-sm">Manage organizational structure, member roles, and system permissions.</p>
+    <div className="p-8 h-full overflow-y-auto bg-[#F8FAFC]">
+      <div className="max-w-6xl">
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Users size={14} className="text-indigo-500" />
+            <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest">Team</span>
+          </div>
+          <h1 className="text-3xl font-black text-slate-900">Identity & Access</h1>
+          <p className="text-slate-500 text-sm mt-1">Manage organizational structure, member roles, and system permissions.</p>
         </div>
-        <Button className="enterprise-btn h-12 px-8">
-          <UserPlus size={18} />
+        <Button className="btn-primary h-11 px-6 rounded-xl text-sm font-semibold flex items-center gap-2">
+          <UserPlus size={16} />
           Provision Member
         </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Members List */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white border border-border">
-            <div className="p-6 border-b border-border bg-secondary/30">
-              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Workforce Inventory</h3>
+        <div className="lg:col-span-2 space-y-5">
+          <div className="card-base overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-100 bg-slate-50">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Workforce Inventory</h3>
             </div>
             <div className="divide-y divide-border">
               {[
@@ -75,7 +80,7 @@ export default function TeamPage() {
           </div>
 
           {/* Pending Invites */}
-          <div className="bg-white border border-border">
+          <div className="card-base overflow-hidden">
             <div className="p-6 border-b border-border bg-secondary/30">
               <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Pending Authorizations</h3>
             </div>
@@ -141,6 +146,7 @@ export default function TeamPage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   )
