@@ -69,40 +69,47 @@ const tools = [
 
 export default function ToolsPage() {
   return (
-    <div className="p-10 h-full overflow-y-auto">
-      <div className="mb-12 space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">AI Tools Directory</h1>
-        <p className="text-muted-foreground text-sm">Specialized enterprise-grade generators for every business operation.</p>
+    <div className="p-8 h-full overflow-y-auto bg-[#F8FAFC]">
+      <div className="max-w-6xl">
+      <div className="mb-10">
+        <div className="flex items-center gap-2 mb-2">
+          <Zap size={14} className="text-amber-500" />
+          <span className="text-xs font-bold text-amber-500 uppercase tracking-widest">AI Tools</span>
+        </div>
+        <h1 className="text-3xl font-black text-slate-900">AI Tools Directory</h1>
+        <p className="text-slate-500 text-sm mt-1">Specialized enterprise-grade generators for every business operation.</p>
       </div>
 
-      <div className="relative mb-12 max-w-md">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+      <div className="relative mb-8 max-w-md">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
         <Input 
-          placeholder="Search for a solution..." 
-          className="pl-12 bg-white border-border rounded-none h-12 focus-visible:ring-primary"
+          placeholder="Search tools..." 
+          className="pl-12 bg-white border-slate-200 rounded-xl h-11 text-sm focus-visible:ring-indigo-400"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 bg-border border border-border">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {tools.map((tool, i) => (
           <Link key={i} href={tool.href}>
-            <div className="p-8 bg-white hover:bg-secondary transition-colors group h-full flex flex-col justify-between">
-              <div className="space-y-6">
-                <tool.icon size={28} className="text-primary" />
-                <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
+            <div className="card-base p-7 group h-full flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
+                  <tool.icon size={20} className="text-indigo-500" />
+                </div>
+                <h3 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
                   {tool.title}
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-xs text-slate-500 leading-relaxed">
                   {tool.description}
                 </p>
               </div>
-              <div className="mt-8 flex items-center text-[10px] font-bold uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                Open Tool
-                <div className="w-8 h-[1px] bg-primary ml-2" />
+              <div className="mt-5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                Open Tool <ArrowRight size={12} />
               </div>
             </div>
           </Link>
         ))}
+      </div>
       </div>
     </div>
   )
