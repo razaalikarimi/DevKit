@@ -2,9 +2,8 @@
 
 import { useState } from "react"
 import { Sidebar } from "@/components/chat/Sidebar"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
 import Link from "next/link"
 
 export default function DashboardLayout({
@@ -15,16 +14,16 @@ export default function DashboardLayout({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background relative">
-      {/* Mobile Menu Overlay */}
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] relative">
+      {/* Mobile Overlay */}
       {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden"
+        <div
+          className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* Sidebar - Desktop: fixed, Mobile: absolute drawer */}
+      {/* Sidebar */}
       <div className={`
         fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
@@ -34,15 +33,22 @@ export default function DashboardLayout({
 
       <main className="flex-1 h-full overflow-hidden flex flex-col">
         {/* Mobile Header */}
-        <div className="h-16 border-b border-border flex items-center px-6 md:hidden justify-between bg-white shrink-0">
+        <div className="h-14 border-b border-slate-200 flex items-center px-5 md:hidden justify-between bg-white shrink-0">
           <Link href="/">
-            <div className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-5 h-5 bg-primary" />
-              <span className="font-bold uppercase tracking-tighter">Aura</span>
+            <div className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+              <div className="w-7 h-7 rounded-xl gradient-brand flex items-center justify-center shadow-md">
+                <Sparkles size={13} className="text-white" />
+              </div>
+              <span className="font-bold text-slate-900">DevKit</span>
             </div>
           </Link>
-          <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </Button>
         </div>
 
