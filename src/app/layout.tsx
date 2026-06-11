@@ -17,8 +17,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DevKit AI | Next-Generation AI SaaS Platform",
-  description: "Experience the future of AI with DevKit. Chat, generate content, and automate workflows with enterprise-grade AI.",
+  title: "DevKit AI | Next-Generation Enterprise AI Platform",
+  description: "DevKit unifies AI chat, knowledge retrieval, code intelligence, and team workflows into one powerful platform. Built for enterprise teams that move fast.",
+  keywords: ["AI platform", "enterprise AI", "knowledge base", "RAG", "AI chat", "DevKit"],
+  authors: [{ name: "DevKit AI" }],
 };
 
 export default function RootLayout({
