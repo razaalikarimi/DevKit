@@ -13,20 +13,25 @@ import { Button } from "@/components/ui/button"
 
 export default function BillingPage() {
   return (
-    <div className="p-10 h-full overflow-y-auto max-w-7xl mx-auto">
-      <div className="mb-12 space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Financial Operations</h1>
-        <p className="text-muted-foreground text-sm">Manage enterprise subscriptions, credit allocation, and transaction history.</p>
+    <div className="p-8 h-full overflow-y-auto bg-[#F8FAFC]">
+      <div className="max-w-6xl">
+      <div className="mb-10 space-y-2">
+        <div className="flex items-center gap-2 mb-2">
+          <CreditCard size={14} className="text-indigo-500" />
+          <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest">Billing</span>
+        </div>
+        <h1 className="text-3xl font-black text-slate-900">Financial Operations</h1>
+        <p className="text-slate-500 text-sm">Manage enterprise subscriptions, credit allocation, and transaction history.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 bg-border border border-border mb-16">
-        <div className="lg:col-span-2 p-10 bg-white space-y-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-12">
+        <div className="lg:col-span-2 card-base p-8 space-y-8">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary flex items-center justify-center">
+            <div className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-lg">
               <Shield className="text-white" size={24} />
             </div>
             <div>
-              <div className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] mb-1">Active Subscription</div>
+              <div className="text-[10px] text-indigo-500 font-bold uppercase tracking-widest mb-1">Active Subscription</div>
               <h2 className="text-2xl font-bold">Enterprise Core Plan</h2>
             </div>
           </div>
@@ -60,7 +65,7 @@ export default function BillingPage() {
           </div>
         </div>
 
-        <div className="p-10 bg-secondary/30 space-y-8">
+        <div className="p-8 bg-slate-50 border border-slate-200 rounded-2xl space-y-6">
           <div className="flex items-center gap-3">
             <Zap className="text-primary" size={20} />
             <h3 className="font-bold uppercase tracking-widest text-xs">Resource Quota</h3>
@@ -91,7 +96,7 @@ export default function BillingPage() {
 
       <div className="mb-8">
         <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground mb-8">Platform Tiers</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-1 bg-border border border-border">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[
             { 
               name: "Standard", 
@@ -138,7 +143,7 @@ export default function BillingPage() {
         </div>
       </div>
 
-      <div className="bg-white border border-border overflow-hidden mt-16">
+      <div className="card-base overflow-hidden mt-10">
         <div className="p-8 border-b border-border flex items-center justify-between">
           <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
             <History size={16} />
@@ -167,6 +172,8 @@ export default function BillingPage() {
             </div>
           ))}
         </div>
+      </div>
+      </div>
       </div>
     </div>
   )
