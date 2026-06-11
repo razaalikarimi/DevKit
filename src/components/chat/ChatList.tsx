@@ -48,7 +48,7 @@ export const ChatList = () => {
           key={chat.id}
           className={`
             group flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all
-            ${params.chatId === chat.id ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"}
+            ${params.chatId === chat.id ? "bg-indigo-50 text-indigo-600 font-semibold border border-indigo-100" : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"}
           `}
         >
           <div 
