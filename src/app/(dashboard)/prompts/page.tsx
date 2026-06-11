@@ -82,11 +82,16 @@ export default function PromptsPage() {
   )
 
   return (
-    <div className="p-10 h-full overflow-y-auto">
-      <div className="flex items-center justify-between mb-12">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">System Prompts</h1>
-          <p className="text-muted-foreground text-sm">Engineered instructions and reusable AI templates.</p>
+    <div className="p-8 h-full overflow-y-auto bg-[#F8FAFC]">
+      <div className="max-w-6xl">
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Terminal size={14} className="text-purple-500" />
+            <span className="text-xs font-bold text-purple-500 uppercase tracking-widest">Prompts</span>
+          </div>
+          <h1 className="text-3xl font-black text-slate-900">System Prompts</h1>
+          <p className="text-slate-500 text-sm mt-1">Engineered instructions and reusable AI templates.</p>
         </div>
         
         <Dialog open={open} onOpenChange={setOpen}>
@@ -152,7 +157,7 @@ export default function PromptsPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 bg-border border border-border">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading ? (
           <div className="col-span-full py-20 bg-white text-center">
             <Loader2 className="animate-spin mx-auto text-primary" size={32} />
@@ -211,6 +216,7 @@ export default function PromptsPage() {
             </div>
           ))
         )}
+      </div>
       </div>
     </div>
   )
