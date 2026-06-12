@@ -42,10 +42,14 @@ export const renameConversation = async (id: string, title: string) => {
   const { userId: clerkId } = await auth()
   const userId = clerkId || "demo-user-id"
 
-  await db.conversation.update({
-    where: { id, userId },
-    data: { title },
-  })
+  try {
+    await db.conversation.update({
+      where: { id, userId },
+      data: { title },
+    })
+  } catch {
+    // Record may not exist or userId mismatch — silently ignore
+  }
 
   revalidatePath("/chat")
 }
@@ -54,7 +58,8 @@ export const deleteConversation = async (id: string) => {
   const { userId: clerkId } = await auth()
   const userId = clerkId || "demo-user-id"
 
-  await db.conversation.delete({
+  // deleteMany never throws if record not found (unlike delete)
+  await db.conversation.deleteMany({
     where: { id, userId },
   })
 
