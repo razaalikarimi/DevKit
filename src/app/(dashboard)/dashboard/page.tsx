@@ -45,7 +45,7 @@ export default async function DashboardPage() {
 
   const STATS = [
     {
-      label: "Tokens Used",
+      label: "Words Generated",
       value: stats.tokens,
       icon: Zap,
       href: "/billing",

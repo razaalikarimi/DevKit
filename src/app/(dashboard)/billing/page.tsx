@@ -73,7 +73,7 @@ export default function BillingPage() {
           <div className="space-y-6">
             <div className="space-y-3">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
-                <span className="text-muted-foreground">Token Pool</span>
+                <span className="text-muted-foreground">Word Generation</span>
                 <span>850k / 1.0M</span>
               </div>
               <div className="h-1.5 bg-border rounded-none overflow-hidden">
@@ -101,13 +101,13 @@ export default function BillingPage() {
             { 
               name: "Standard", 
               price: "$19", 
-              features: ["50k tokens/mo", "Model access: Flash", "Shared compute", "Standard support"],
+              features: ["50k words/mo", "Standard AI Engine", "Shared compute", "Standard support"],
               current: false 
             },
             { 
               name: "Enterprise Core", 
               price: "$49", 
-              features: ["500k tokens/mo", "Model access: Pro", "Priority compute", "24/7 Support", "Hybrid RAG"],
+              features: ["500k words/mo", "Advanced AI Engine", "Priority compute", "24/7 Support", "Semantic Search"],
               current: true 
             },
             { 

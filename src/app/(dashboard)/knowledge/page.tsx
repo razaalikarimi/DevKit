@@ -224,14 +224,14 @@ export default function KnowledgePage() {
                     <div className="text-2xl font-black text-slate-900">{documents.length}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Architecture</div>
-                    <div className="text-xs font-bold text-teal-600 uppercase tracking-wider">Hybrid RAG</div>
+                    <div className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Retrieval Engine</div>
+                    <div className="text-xs font-bold text-teal-600 uppercase tracking-wider">Semantic Search</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* RAG Info */}
+            {/* Engine Info */}
             <div
               className="rounded-2xl p-6 text-white relative overflow-hidden"
               style={{ background: "linear-gradient(135deg, #4F46E5 0%, #0D9488 100%)" }}
@@ -239,14 +239,14 @@ export default function KnowledgePage() {
               <div className="absolute top-0 right-0 w-24 h-24 rounded-full opacity-10"
                 style={{ background: "radial-gradient(circle, white, transparent)" }}
               />
-              <h3 className="font-bold text-sm mb-3">Enterprise RAG Engine</h3>
+              <h3 className="font-bold text-sm mb-3">Intelligent Knowledge Hub</h3>
               <p className="text-xs text-indigo-100 leading-relaxed mb-5">
-                DevKit utilizes high-performance vector indexing to provide your AI
-                with secure, real-time access to your knowledge base.
+                DevKit seamlessly indexes your files to provide the AI assistant
+                with secure, instant access to your team's custom data.
               </p>
               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-indigo-200">
                 <ShieldCheck size={12} />
-                AES-256 Encrypted
+                Enterprise Security
               </div>
             </div>
           </div>
