@@ -6,17 +6,22 @@ import { revalidatePath } from "next/cache"
 const userId = "demo-user-id" // Using mock user for now
 
 export const getPrompts = async () => {
-  return await db.promptTemplate.findMany({
-    where: {
-      OR: [
-        { userId },
-        { isPublic: true }
-      ]
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  })
+  try {
+    return await db.promptTemplate.findMany({
+      where: {
+        OR: [
+          { userId },
+          { isPublic: true }
+        ]
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    })
+  } catch (error) {
+    console.error("[getPrompts] Error:", error)
+    return []
+  }
 }
 
 export const createPrompt = async (data: { name: string, description: string, prompt: string, isPublic: boolean }) => {

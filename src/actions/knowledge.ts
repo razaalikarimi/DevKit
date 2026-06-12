@@ -6,10 +6,15 @@ import { revalidatePath } from "next/cache"
 const userId = "demo-user-id"
 
 export const getDocuments = async () => {
-  return await db.document.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" }
-  })
+  try {
+    return await db.document.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" }
+    })
+  } catch (error) {
+    console.error("[getDocuments] Error:", error)
+    return []
+  }
 }
 
 export const deleteDocument = async (id: string) => {

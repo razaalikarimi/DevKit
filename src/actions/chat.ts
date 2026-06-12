@@ -23,19 +23,24 @@ export const createConversation = async (workspaceId?: string) => {
 }
 
 export const getConversations = async (workspaceId?: string) => {
-  const { userId: clerkId } = await auth()
-  const userId = clerkId || "demo-user-id"
+  try {
+    const { userId: clerkId } = await auth()
+    const userId = clerkId || "demo-user-id"
 
-  return await db.conversation.findMany({
-    where: {
-      userId,
-      workspaceId,
-      isArchived: false,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  })
+    return await db.conversation.findMany({
+      where: {
+        userId,
+        workspaceId,
+        isArchived: false,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    })
+  } catch (error) {
+    console.error("[getConversations] Error:", error)
+    return []
+  }
 }
 
 export const renameConversation = async (id: string, title: string) => {
