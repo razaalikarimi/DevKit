@@ -1,5 +1,5 @@
 import { google } from "@ai-sdk/google"
-import { streamText } from "ai"
+import { streamText, generateId } from "ai"
 import { db } from "@/lib/db"
 
 export const maxDuration = 30
@@ -38,22 +38,37 @@ export async function POST(req: Request) {
     if (!apiKey || apiKey.startsWith("AIza...")) {
       const mockText = "This is a simulated AI response. Your UI and backend are fully functional! To get real AI generation, please provide a valid GOOGLE_GENERATIVE_AI_API_KEY in the .env file.";
       
+      const messageId = generateId();
       const stream = new ReadableStream({
         async start(controller) {
           const encoder = new TextEncoder();
-          const words = mockText.split(" ");
           
+          // Send text-start
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-start", id: messageId })}\n\n`));
+          
+          const words = mockText.split(" ");
           for (let i = 0; i < words.length; i++) {
-            // Vercel AI SDK Data Stream format: 0:text
-            controller.enqueue(encoder.encode(`0:"${words[i]} "\n`));
+            // Send text-delta
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ type: "text-delta", id: messageId, delta: words[i] + " " })}\n\n`)
+            );
             await new Promise(r => setTimeout(r, 50));
           }
+          
+          // Send text-end
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-end", id: messageId })}\n\n`));
           controller.close();
         }
       });
       
       return new Response(stream, {
-        headers: { "Content-Type": "text/plain; charset=utf-8", "x-vercel-ai-data-stream": "v1" }
+        headers: {
+          "Content-Type": "text/event-stream; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          "Connection": "keep-alive",
+          "x-vercel-ai-ui-message-stream": "v1",
+          "x-accel-buffering": "no"
+        }
       });
     }
 
@@ -63,7 +78,7 @@ export async function POST(req: Request) {
       messages: coreMessages,
     })
 
-    return (result as any).toDataStreamResponse()
+    return result.toUIMessageStreamResponse()
   } catch (error) {
     console.error("Chat API Error:", error)
     return new Response(JSON.stringify({ error: "Failed to generate response" }), { 
