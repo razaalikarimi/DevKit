@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Sidebar } from "@/components/chat/Sidebar"
-import { Menu, X, Sparkles } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -36,11 +36,11 @@ export default function DashboardLayout({
         <div className="h-14 border-b border-slate-200 flex items-center px-5 md:hidden justify-between bg-white shrink-0">
           <Link href="/">
             <div className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-              <div className="w-7 h-7 rounded-xl gradient-brand flex items-center justify-center shadow-md">
-                <Sparkles size={13} className="text-white" />
+                <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center">
+                  <span className="text-white text-xs font-black leading-none">D</span>
+                </div>
+                <span className="font-bold text-slate-900 text-[15px]">DevKit</span>
               </div>
-              <span className="font-bold text-slate-900">DevKit</span>
-            </div>
           </Link>
           <Button
             variant="ghost"
