@@ -1,17 +1,16 @@
-"use client"
-
 import {
   Zap,
   MessageSquare,
-  Users,
+  FileText,
   Activity,
   ArrowRight,
-  TrendingUp,
   Clock,
   GitBranch,
   FolderOpen,
+  CreditCard,
 } from "lucide-react"
 import Link from "next/link"
+import { getDashboardStats } from "@/actions/dashboard"
 
 const QUICK_ACTIONS = [
   {
@@ -40,26 +39,53 @@ const QUICK_ACTIONS = [
   },
 ]
 
-const STATS = [
-  { label: "Tokens Used",   value: "1.2M",    icon: Zap,           href: "/billing",   delta: "+12% this week" },
-  { label: "Active Chats",  value: "248",      icon: MessageSquare, href: "/chat",      delta: "+24 today"      },
-  { label: "Team Members",  value: "12",       icon: Users,         href: "/team",      delta: "3 online now"   },
-  { label: "System Status", value: "Healthy",  icon: Activity,      href: "/dashboard", delta: "99.9% uptime"   },
-]
+export default async function DashboardPage() {
+  // Real data from DB
+  const { stats, usage, activity } = await getDashboardStats()
 
-const ACTIVITY = [
-  { initials: "A", action: "New AI chat session started", time: "2 min ago",  },
-  { initials: "M", action: "Knowledge document uploaded", time: "15 min ago", },
-  { initials: "S", action: "RepoMind scan completed",     time: "1 hr ago",   },
-]
+  const STATS = [
+    {
+      label: "Tokens Used",
+      value: stats.tokens,
+      icon: Zap,
+      href: "/billing",
+      sub: "total this month",
+    },
+    {
+      label: "Active Chats",
+      value: stats.chats,
+      icon: MessageSquare,
+      href: "/chat",
+      sub: "conversations",
+    },
+    {
+      label: "Documents",
+      value: stats.docs,
+      icon: FileText,
+      href: "/knowledge",
+      sub: "in knowledge base",
+    },
+    {
+      label: "System Status",
+      value: "Healthy",
+      icon: Activity,
+      href: "/dashboard",
+      sub: "99.9% uptime",
+    },
+  ]
 
-const USAGE_BARS = [
-  { label: "Storage",    used: 85, color: "bg-indigo-500" },
-  { label: "API Calls",  used: 40, color: "bg-slate-400"  },
-  { label: "Team Seats", used: 60, color: "bg-slate-600"  },
-]
+  const USAGE_BARS = [
+    { label: "Storage",    used: usage.storage.pct,  detail: usage.storage.label,  color: "bg-indigo-500" },
+    { label: "API Calls",  used: usage.apiCalls.pct, detail: usage.apiCalls.label, color: "bg-slate-500"  },
+    { label: "Credits",    used: usage.credits.pct,  detail: usage.credits.label,  color: "bg-slate-600"  },
+  ]
 
-export default function DashboardPage() {
+  const ACTIVITY_ICONS: Record<string, string> = {
+    chat:   "C",
+    doc:    "D",
+    system: "S",
+  }
+
   return (
     <div className="p-8 h-full overflow-y-auto bg-[#F8FAFC]">
       <div className="max-w-6xl">
@@ -71,15 +97,19 @@ export default function DashboardPage() {
               Welcome back
             </p>
             <h1 className="text-2xl font-bold text-slate-900">Platform Overview</h1>
-            <p className="text-slate-500 text-sm mt-1">Monitor your AI platform's performance and usage.</p>
+            <p className="text-slate-500 text-sm mt-1">
+              Live data from your workspace — updated on every page load.
+            </p>
           </div>
           <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-md px-3.5 py-2">
             <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            <span className="text-xs font-medium text-slate-600">Demo Mode Active</span>
+            <span className="text-xs font-medium text-slate-600">
+              {stats.plan} Plan · {stats.credits} credits
+            </span>
           </div>
         </div>
 
-        {/* Quick Actions — clean cards, no emojis, no colored top borders */}
+        {/* Quick Actions */}
         <div className="mb-10">
           <h2 className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-4">
             Quick Start
@@ -106,29 +136,28 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Stats — no bright icon colors, clean hover */}
+        {/* Real Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           {STATS.map((s, i) => (
             <Link key={i} href={s.href}>
               <div className="card-base p-5 cursor-pointer group">
                 <div className="flex items-center gap-2 mb-3 text-slate-400 group-hover:text-indigo-500 transition-colors">
                   <s.icon size={14} />
-                  <span className="text-[10px] font-semibold uppercase tracking-widest">{s.label}</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest">
+                    {s.label}
+                  </span>
                 </div>
-                <div className="text-2xl font-bold text-slate-900 mb-1.5">{s.value}</div>
-                <div className="flex items-center gap-1 text-[10px] font-medium text-slate-500">
-                  <TrendingUp size={10} />
-                  {s.delta}
-                </div>
+                <div className="text-2xl font-bold text-slate-900 mb-1">{s.value}</div>
+                <div className="text-[10px] text-slate-400 font-medium">{s.sub}</div>
               </div>
             </Link>
           ))}
         </div>
 
-        {/* Bottom Grid — Activity + Plan Usage */}
+        {/* Bottom Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {/* Recent Activity */}
+          {/* Real Activity Feed */}
           <div className="card-base p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-sm font-semibold text-slate-800">Recent Activity</h3>
@@ -136,31 +165,37 @@ export default function DashboardPage() {
                 Live
               </span>
             </div>
-            <div className="space-y-4">
-              {ACTIVITY.map((item, i) => (
-                <div key={i} className="flex items-center gap-3.5">
-                  {/* Neutral initials avatar — no colored backgrounds */}
-                  <div className="w-8 h-8 rounded-md bg-slate-100 border border-slate-200 flex items-center justify-center text-[11px] font-bold text-slate-600 flex-shrink-0">
-                    {item.initials}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm text-slate-700 truncate">{item.action}</div>
-                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mt-0.5">
-                      <Clock size={10} />
-                      {item.time}
+
+            {activity.length === 0 ? (
+              <div className="py-6 text-center text-xs text-slate-400">
+                No activity yet. Start a chat or upload a document.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {activity.map((item, i) => (
+                  <div key={i} className="flex items-center gap-3.5">
+                    <div className="w-8 h-8 rounded-md bg-slate-100 border border-slate-200 flex items-center justify-center text-[11px] font-bold text-slate-600 flex-shrink-0">
+                      {ACTIVITY_ICONS[item.type] ?? "A"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm text-slate-700 truncate">{item.label}</div>
+                      <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mt-0.5">
+                        <Clock size={10} />
+                        {item.time}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Plan Usage */}
+          {/* Real Plan Usage */}
           <div className="card-base p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-sm font-semibold text-slate-800">Plan Usage</h3>
               <span className="text-[10px] font-semibold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded px-2 py-0.5">
-                Premium
+                {stats.plan}
               </span>
             </div>
             <div className="space-y-5">
@@ -168,7 +203,9 @@ export default function DashboardPage() {
                 <div key={item.label}>
                   <div className="flex justify-between text-xs mb-2">
                     <span className="text-slate-500 font-medium">{item.label}</span>
-                    <span className="text-slate-700 font-semibold">{item.used}%</span>
+                    <span className="text-slate-700 font-semibold">
+                      {item.detail}
+                    </span>
                   </div>
                   <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                     <div
@@ -182,6 +219,7 @@ export default function DashboardPage() {
             <div className="mt-6 pt-4 border-t border-slate-100">
               <Link href="/billing">
                 <button className="w-full h-9 rounded-md text-sm font-semibold text-indigo-600 border border-indigo-200 hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2">
+                  <CreditCard size={13} />
                   Manage Billing <ArrowRight size={13} />
                 </button>
               </Link>
