@@ -2,20 +2,13 @@
 
 import { useChat } from "@ai-sdk/react"
 import { useState, useEffect, useRef } from "react"
-import { 
-  Send, 
-  User, 
-  Bot, 
-  StopCircle,
-  Brain,
-  Zap,
-  MoreHorizontal
-} from "lucide-react"
+import { Send, User, Bot, StopCircle, MessageSquare, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
+import { DefaultChatTransport } from "ai"
 
 export const ChatWindow = () => {
   const params = useParams()
@@ -25,43 +18,38 @@ export const ChatWindow = () => {
   useEffect(() => {
     setIsMounted(true)
   }, [])
-  
-  const chatHelpers = useChat({
+
+  const {
+    messages,
+    sendMessage,
+    status,
+    stop,
+    regenerate,
+  } = useChat({
     id: chatId,
-    api: "/api/chat",
-    body: {
-      chatId,
-      personality: "Professional",
-      model: "gemini-1.5-flash"
-    },
-    onResponse: (response: any) => {
-      if (!response.ok) {
-        toast.error("Failed to connect to AI neural link.")
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+      body: {
+        chatId,
+        personality: "Professional",
+        model: "gemini-1.5-flash"
       }
+    }),
+    onError: () => {
+      toast.error("Failed to connect to AI. Please try again.")
     },
-  } as any) as any
+  })
 
-  const { messages, sendMessage, status, stop, regenerate } = chatHelpers
   const [input, setInput] = useState("")
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value)
-  }
-
   const isLoading = status === "streaming" || status === "submitted"
-
-  const reload = () => {
-    regenerate()
-  }
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-    sendMessage({ text: input });
-    setInput("");
-  };
-
-  const scrollRef = useRef<HTMLDivElement>(null)
+    e.preventDefault()
+    if (!input.trim() || isLoading) return
+    sendMessage({ text: input })
+    setInput("")
+  }
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -73,107 +61,131 @@ export const ChatWindow = () => {
 
   const copyToClipboard = (content: string) => {
     navigator.clipboard.writeText(content)
-    toast.success("Asset copied to clipboard.")
+    toast.success("Copied to clipboard.")
   }
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      {/* Header */}
-      <header className="h-20 flex items-center justify-between px-10 border-b border-slate-100 bg-white sticky top-0 z-10">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-xs">
-            <Zap size={18} />
+    <div className="flex flex-col h-full bg-white">
+
+      {/* Header — clean, minimal */}
+      <header className="h-14 flex items-center justify-between px-5 border-b border-slate-100 bg-white sticky top-0 z-10 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 rounded-md bg-slate-100 text-slate-400 flex items-center justify-center">
+            <MessageSquare size={14} />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-slate-800 tracking-tight">Enterprise Core AI</h2>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.15em] mt-0.5">Verified Instance</p>
+            <h2 className="text-sm font-semibold text-slate-800 leading-tight">AI Chat</h2>
+            <p className="text-[10px] text-slate-400 leading-tight">DevKit Assistant</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 bg-teal-50 border border-teal-100 rounded-lg shadow-xs">
-            <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700">Neural Link Active</span>
+        <div className="flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-xs text-slate-400">Connected</span>
           </div>
-          <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-xl">
-            <MoreHorizontal size={18} />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-md"
+          >
+            <MoreHorizontal size={15} />
           </Button>
         </div>
       </header>
 
       {/* Messages */}
       <ScrollArea className="flex-1" ref={scrollRef}>
-        <div className="max-w-4xl mx-auto p-10 space-y-12">
+        <div className="max-w-3xl mx-auto px-6 py-8 space-y-6">
+
+          {/* Empty state */}
           {messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-24 text-center space-y-6">
-              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm">
-                <Brain size={32} />
+            <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+              <div className="w-11 h-11 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400">
+                <MessageSquare size={20} />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-bold text-slate-800 tracking-tight">New Conversation</h3>
-                <p className="text-xs text-slate-500 max-w-xs">
-                  Start a conversation with DevKit AI. Type a message below to begin.
+              <div className="space-y-1.5">
+                <h3 className="text-sm font-semibold text-slate-700">New Conversation</h3>
+                <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
+                  Type a message below to start chatting with DevKit AI.
                 </p>
               </div>
             </div>
           )}
 
-          {messages.map((m: any) => (
-            <div key={m.id} className={`flex gap-4 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
-                m.role === "user" ? "bg-indigo-600 text-white" : "bg-teal-50 text-teal-600 border border-teal-100"
-              }`}>
-                {m.role === "user" ? <User size={18} /> : <Bot size={18} />}
-              </div>
-              <div className={`flex flex-col gap-2 max-w-[80%] ${m.role === "user" ? "items-end" : "items-start"}`}>
-                <div className={`px-5 py-3.5 text-sm leading-relaxed border shadow-xs ${
-                  m.role === "user" 
-                    ? "bg-indigo-600 text-white border-indigo-600 rounded-2xl rounded-tr-none" 
-                    : "bg-white text-slate-800 border-slate-100 rounded-2xl rounded-tl-none"
+          {messages.map((m: any) => {
+            const content = m.content || (m.parts
+              ? m.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("")
+              : "")
+            if (!content.trim()) return null
+
+            const isUser = m.role === "user"
+
+            return (
+              <div key={m.id} className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
+                {/* Avatar */}
+                <div className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ${
+                  isUser
+                    ? "bg-indigo-600 text-white"
+                    : "bg-slate-100 text-slate-500 border border-slate-200"
                 }`}>
-                  {m.content || ""}
+                  {isUser ? <User size={13} /> : <Bot size={13} />}
                 </div>
-                {m.role !== "user" && (
-                  <div className="flex items-center gap-4 px-1">
-                    <button 
-                      onClick={() => copyToClipboard(m.content || "")} 
-                      className="text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-indigo-600 transition-colors"
-                    >
-                      Copy Response
-                    </button>
-                    <button 
-                      onClick={() => reload()} 
-                      className="text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-indigo-600 transition-colors"
-                    >
-                      Regenerate
-                    </button>
+
+                {/* Bubble + actions */}
+                <div className={`flex flex-col gap-1.5 max-w-[78%] ${isUser ? "items-end" : "items-start"}`}>
+                  <div className={`px-4 py-3 text-sm leading-relaxed rounded-xl ${
+                    isUser
+                      ? "bg-indigo-600 text-white rounded-tr-sm"
+                      : "bg-white text-slate-800 border border-slate-200 rounded-tl-sm shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+                  }`}>
+                    {content}
                   </div>
-                )}
+                  {!isUser && (
+                    <div className="flex items-center gap-3 px-1">
+                      <button
+                        onClick={() => copyToClipboard(content)}
+                        className="text-[10px] text-slate-400 hover:text-slate-600 transition-colors font-medium"
+                      >
+                        Copy
+                      </button>
+                      <button
+                        onClick={() => regenerate()}
+                        className="text-[10px] text-slate-400 hover:text-slate-600 transition-colors font-medium"
+                      >
+                        Regenerate
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
+
+          {/* Loading indicator */}
           {isLoading && (
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 border border-teal-100 flex items-center justify-center shadow-sm">
-                <Bot size={18} />
+            <div className="flex gap-3">
+              <div className="w-7 h-7 rounded-md bg-slate-100 text-slate-400 border border-slate-200 flex items-center justify-center flex-shrink-0">
+                <Bot size={13} />
               </div>
-              <div className="bg-white border border-slate-100 p-4 rounded-2xl rounded-tl-none shadow-xs flex gap-1 items-center">
-                <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-bounce" />
-                <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.2s]" />
-                <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.4s]" />
+              <div className="bg-white border border-slate-200 px-4 py-3 rounded-xl rounded-tl-sm flex gap-1.5 items-center shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+                <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" />
+                <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.15s]" />
+                <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.3s]" />
               </div>
             </div>
           )}
+
         </div>
       </ScrollArea>
 
-      {/* Input */}
-      <div className="p-8 bg-white border-t border-slate-100 shadow-sm">
-        <form onSubmit={onSubmit} className="max-w-4xl mx-auto relative">
+      {/* Input — clean, professional */}
+      <div className="px-5 py-4 bg-white border-t border-slate-100 flex-shrink-0">
+        <form onSubmit={onSubmit} className="max-w-3xl mx-auto relative">
           <Textarea
             value={input}
-            onChange={handleInputChange}
-            placeholder="Ask DevKit AI a question..."
-            className="min-h-[60px] max-h-[200px] w-full bg-slate-50 border border-slate-200/80 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500 rounded-xl pr-32 py-4 resize-none text-sm text-slate-800 placeholder:text-slate-400 leading-relaxed transition-all shadow-xs"
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Message DevKit AI..."
+            className="min-h-[52px] max-h-[180px] w-full bg-slate-50 border border-slate-200 focus-visible:ring-2 focus-visible:ring-indigo-300 focus-visible:border-indigo-400 rounded-xl pr-28 py-3.5 resize-none text-sm text-slate-800 placeholder:text-slate-400 leading-relaxed transition-all"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault()
@@ -182,29 +194,35 @@ export const ChatWindow = () => {
               }
             }}
           />
-          <div className="absolute right-3 bottom-3 flex items-center gap-2">
+          <div className="absolute right-3 bottom-3">
             {isLoading ? (
-              <Button onClick={() => stop()} size="sm" variant="ghost" className="h-9 px-3 text-red-600 hover:bg-red-50 hover:text-red-700 font-bold uppercase tracking-wider text-[10px] rounded-lg">
-                <StopCircle size={16} className="mr-1.5" />
-                Terminate
+              <Button
+                onClick={() => stop()}
+                size="sm"
+                variant="ghost"
+                className="h-8 px-3 text-red-500 hover:bg-red-50 hover:text-red-600 text-xs font-semibold rounded-md"
+              >
+                <StopCircle size={13} className="mr-1.5" />
+                Stop
               </Button>
             ) : (
-              <Button type="submit" size="sm" disabled={!input || !input.trim()} className="enterprise-btn h-9 px-5 font-semibold text-[10px] uppercase tracking-wider rounded-lg">
+              <Button
+                type="submit"
+                size="sm"
+                disabled={!input.trim()}
+                className="h-8 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors disabled:opacity-40"
+              >
                 <Send size={12} className="mr-1.5" />
                 Send
               </Button>
             )}
           </div>
         </form>
-        <div className="max-w-4xl mx-auto mt-3.5 flex items-center justify-between">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-            Identity: {process.env.NEXT_PUBLIC_APP_NAME || "DEVKIT"} v1.0.0
-          </div>
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-            Security: TLS 1.3 / AES-256
-          </div>
-        </div>
+        <p className="max-w-3xl mx-auto mt-2 text-[10px] text-slate-400 text-center">
+          Press <kbd className="font-mono bg-slate-100 border border-slate-200 rounded px-1">Enter</kbd> to send · <kbd className="font-mono bg-slate-100 border border-slate-200 rounded px-1">Shift+Enter</kbd> for new line
+        </p>
       </div>
+
     </div>
   )
 }
