@@ -1,86 +1,96 @@
-# 🌌 DevKit AI - Next-Generation AI SaaS Platform
+# DevKit
 
-DevKit AI is a premium, enterprise-grade SaaS platform designed to streamline AI workflows, generate high-converting content, manage knowledge bases, map code repository architectures, and optimize developer prompts.
+A personal AI platform I've been building to replace the dozen browser tabs I used to have open — ChatGPT, GitHub, Notion, and random tools scattered everywhere. Everything's in one place now.
 
----
-
-## ✨ Key Features
-
-- **🚀 Overview Dashboard**: Keep track of token usage, active chat sessions, system health, storage, and recent platform logs.
-- **⚡ AI Tools Marketplace**: Access specialized tools like LinkedIn Post Creators, AI Code Generators, YouTube Script Writers, SEO Optimizers, Resume Builders, and Image Prompt Generators.
-- **📂 Knowledge Base**: Upload files (PDFs, docs) to construct an intelligent context-aware knowledge base.
-- **🌿 RepoMind AI**: Link GitHub/local repositories to index files, visualize code layouts through **Mermaid architecture maps**, and perform security checks.
-- **⭐ Prompt Engineering**: Save, manage, and share reusable prompts templates.
-- **👥 Workspace & Team Management**: Collaboration capabilities built directly into workspaces.
-- **💳 Billing & Subscription**: Stripe subscription tier tracking.
+![Next.js](https://img.shields.io/badge/Next.js_16-black?style=flat-square&logo=next.js)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-0F172A?style=flat-square&logo=tailwindcss)
 
 ---
 
-## 🛠️ Technology Stack
+## What it does
 
-- **Framework**: Next.js (App Router, Turbopack enabled)
-- **Database**: SQLite (Local database, powered by Prisma ORM)
-- **Styling & UI**: Tailwind CSS, shadcn/ui, Framer Motion, Lucide icons
-- **State & Data Fetching**: Zustand, TanStack React Query
-- **AI Integrations**: Vercel AI SDK, Google Gemini / OpenAI (optional)
-- **Authentication**: Localized Mock Clerk Wrapper (for seamless offline-first experience)
+**AI Chat** — Conversations with memory. Each session is stored in a local SQLite DB so context carries over across reloads.
+
+**AI Tools** — Pre-built prompts for things I actually use: LinkedIn posts, code generators, SEO content, YouTube scripts, resume bullets. One click, done.
+
+**Knowledge Hub** — Upload PDFs and docs. The platform indexes them and lets you query against your own content through the chat interface.
+
+**RepoMind** — Point it at a GitHub repo and it generates a Mermaid architecture map of the codebase, runs a basic security scan, and gives you a file-level breakdown. Useful before touching an unfamiliar project.
+
+**Prompts Library** — Save and reuse prompts across sessions. Stops me from retyping the same system instructions every time.
+
+**Team & Billing** — Multi-user workspace support with Stripe subscription tracking built in.
 
 ---
 
-## 🚀 Getting Started
+## Stack
 
-Follow these steps to run the application locally on your machine.
+| Layer | Tech |
+|---|---|
+| Framework | Next.js 16, App Router, Turbopack |
+| Database | SQLite via Prisma ORM |
+| Styling | Tailwind CSS + shadcn/ui |
+| AI | Vercel AI SDK + Google Gemini |
+| State | Zustand + TanStack Query |
+| Auth | Mock Clerk (swap-ready for production) |
 
-### 1. Install Dependencies
+---
 
-Navigate to the `web/` directory and install the required packages:
+## Running locally
+
 ```bash
+# 1. Install
 cd web
 npm install
-```
 
-### 2. Configure Environment Variables
-
-Create or update your `.env` file inside the `web/` directory:
-```env
-# Database (SQLite)
+# 2. Set up your .env
 DATABASE_URL="file:./dev.db"
-
-# Authentication (Mock credentials are used by default)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_bHVja3ktbW91c2UtMTIuY2xlcmsuYWNjb3VudHMuZGV2JA
-CLERK_SECRET_KEY=sk_test_53423789423984723894723894723894
-
-# AI Credentials (Optional: add your key to enable live AI responses)
-GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_key_here
-
-# App URL
+GOOGLE_GENERATIVE_AI_API_KEY=your_key_here
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
 
-### 3. Run Database Migrations & Seeding
-
-Sync the Prisma schema to compile the SQLite database, and run the seed script to create initial mockup data:
-```bash
+# 3. Push DB schema + seed demo data
 npx prisma db push
 node seed.mjs
-```
 
-### 4. Run Development Server
-
-Start the local server using:
-```bash
+# 4. Start
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to inspect the application.
+Open `http://localhost:3000`. That's it.
 
 ---
 
-## 🔒 Authentication & Demo Mode
+## Auth & demo mode
 
-To allow a fast, configuration-free demo experience, the project features a **mocked Clerk auth module** located at [mock-clerk.tsx](file:///e:/Try%20Project/AI%20SaaS%20platform/web/src/lib/mock-clerk.tsx).
+Auth is mocked out using a local Clerk wrapper at `src/lib/mock-clerk.tsx`. It simulates a signed-in session with `demo-user-id` so you can run everything without setting up Clerk.
 
-- **How it works**: Client-side components and server-side operations are resolved locally using a simulated user session with the ID `demo-user-id`.
-- **To switch to production Clerk**:
-  1. Set your actual Clerk `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` in `.env`.
-  2. Change references in the codebase from `@/lib/mock-clerk` back to `@clerk/nextjs` and `@clerk/nextjs/server`.
+To switch to real auth:
+1. Add your actual Clerk keys to `.env`
+2. Replace `@/lib/mock-clerk` imports with `@clerk/nextjs` and `@clerk/nextjs/server`
+
+---
+
+## Project layout
+
+```
+web/
+├── src/
+│   ├── app/
+│   │   ├── (marketing)/     # Landing page, features, pricing
+│   │   ├── (dashboard)/     # All app pages behind auth
+│   │   └── api/             # AI chat endpoint
+│   ├── components/
+│   │   ├── chat/            # Sidebar, ChatWindow, ChatList
+│   │   └── marketing/       # Navbar, Hero, Features, Footer
+│   ├── actions/             # Server actions (chat, knowledge)
+│   └── lib/                 # Utilities, mock-clerk, db client
+├── prisma/
+│   └── schema.prisma
+└── .env
+```
+
+---
+
+Built with Next.js 16 + Turbopack. Runs entirely offline once set up.
