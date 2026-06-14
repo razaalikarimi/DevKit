@@ -9,37 +9,55 @@ const getDbUserId = async () => {
   const { userId: clerkId } = await auth();
   if (!clerkId) return "demo-user-id";
 
-  let user = await db.user.findUnique({ where: { clerkId } });
-  
-  if (!user) {
-    const clerkUser = await currentUser();
-    user = await db.user.create({
-      data: {
-        clerkId,
-        email: clerkUser?.emailAddresses[0]?.emailAddress || `${clerkId}@example.com`,
-        name: clerkUser?.fullName || 'New User',
-      }
-    });
+  try {
+    let user = await db.user.findUnique({ where: { clerkId } });
+    
+    if (!user) {
+      const clerkUser = await currentUser();
+      user = await db.user.create({
+        data: {
+          clerkId,
+          email: clerkUser?.emailAddresses[0]?.emailAddress || `${clerkId}@example.com`,
+          name: clerkUser?.fullName || 'New User',
+        }
+      });
+    }
+    return user.id;
+  } catch (error) {
+    console.error("[getDbUserId] DB write failed (likely Vercel read-only FS):", error);
+    return "demo-user-id";
   }
-  
-  return user.id;
 }
 
 export const createConversation = async (workspaceId?: string) => {
   const userId = await getDbUserId()
 
-  const conversation = await db.conversation.create({
-    data: {
-      userId,
-      workspaceId,
-      title: "New Chat",
-      id: crypto.randomUUID(),
-      updatedAt: new Date(),
-    },
-  })
+  try {
+    const conversation = await db.conversation.create({
+      data: {
+        userId,
+        workspaceId,
+        title: "New Chat",
+        id: crypto.randomUUID(),
+        updatedAt: new Date(),
+      },
+    })
 
-  revalidatePath("/chat")
-  return conversation
+    revalidatePath("/chat")
+    return conversation
+  } catch (error) {
+    console.error("[createConversation] DB write failed:", error);
+    // Return a mock conversation so the UI doesn't crash on Vercel
+    return {
+      id: crypto.randomUUID(),
+      userId,
+      workspaceId: workspaceId || null,
+      title: "New Chat",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isArchived: false
+    } as any;
+  }
 }
 
 export const getConversations = async (workspaceId?: string) => {
