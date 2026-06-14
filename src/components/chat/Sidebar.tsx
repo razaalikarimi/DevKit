@@ -22,6 +22,7 @@ import { ChatList } from "./ChatList"
 import { createConversation } from "@/actions/chat"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { Logo } from "@/components/Logo"
 
 const routes = [
   { label: "Overview",    icon: LayoutDashboard, href: "/dashboard", badge: null  },
@@ -61,10 +62,7 @@ export const Sidebar = () => {
       {/* Brand — simple wordmark, no badge */}
       <Link href="/">
         <div className="h-16 px-5 flex items-center gap-3 border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer">
-          <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-xs font-black leading-none">D</span>
-          </div>
-          <span className="font-bold text-slate-900 text-[15px]">DevKit</span>
+          <Logo />
         </div>
       </Link>
 

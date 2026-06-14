@@ -2,9 +2,9 @@
 
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-import { useUser, UserButton } from "@/lib/mock-clerk"
+import { useUser, UserButton } from "@clerk/nextjs"
 import { useState, useEffect } from "react"
-
+import { Logo } from "@/components/Logo"
 export const Navbar = () => {
   const { isSignedIn, isLoaded } = useUser()
   const [scrolled, setScrolled] = useState(false)
@@ -23,14 +23,9 @@ export const Navbar = () => {
         ? "bg-white/96 backdrop-blur-sm border-slate-200 shadow-[0_1px_3px_rgba(15,23,42,0.06)]"
         : "bg-white border-slate-100"}
     `}>
-      {/* Logo — simple wordmark with minimal mark */}
-      <Link href="/" className="flex items-center gap-2.5 group">
-        <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center flex-shrink-0">
-          <span className="text-white text-xs font-black leading-none">D</span>
-        </div>
-        <span className="text-[15px] font-bold text-slate-900 tracking-tight">
-          DevKit
-        </span>
+      {/* Logo */}
+      <Link href="/">
+        <Logo />
       </Link>
 
       {/* Nav Links */}

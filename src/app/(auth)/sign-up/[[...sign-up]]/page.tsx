@@ -1,9 +1,9 @@
-import { SignUp } from "@/lib/mock-clerk";
+import { SignUp } from "@clerk/nextjs";
 
 export default function Page() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-50">
-      <SignUp />
+    <div className="flex items-center justify-center w-full">
+      <SignUp appearance={{ elements: { rootBox: "mx-auto w-full", card: "shadow-none bg-transparent" } }} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@/lib/mock-clerk";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -7,8 +7,10 @@ const isPublicRoute = createRouteMatcher([
   "/api/chat(.*)",
 ]);
 
-export default clerkMiddleware(async (auth: any, request: any) => {
-  // Demo mode
+export default clerkMiddleware(async (auth, request) => {
+  if (!isPublicRoute(request)) {
+    await auth.protect();
+  }
 });
 
 export const config = {

@@ -11,11 +11,6 @@ export const Hero = () => {
 
           {/* Left — Content */}
           <div>
-            {/* Eyebrow label */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-xs font-semibold text-slate-500 mb-7 tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
-              Enterprise AI Workflow Platform
-            </div>
 
             {/* Headline */}
             <h1 className="text-4xl md:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-slate-900 leading-[1.12] mb-6">
