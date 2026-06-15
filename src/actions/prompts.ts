@@ -36,8 +36,14 @@ export const createPrompt = async (data: { name: string, description: string, pr
 }
 
 export const deletePrompt = async (id: string) => {
-  await db.promptTemplate.delete({
-    where: { id, userId }
-  })
-  revalidatePath("/prompts")
+  try {
+    await db.promptTemplate.delete({
+      where: { id, userId }
+    })
+    revalidatePath("/prompts")
+  } catch (error) {
+    console.error("[deletePrompt] Error:", error)
+    // If it doesn't exist, just ignore it and revalidate
+    revalidatePath("/prompts")
+  }
 }
