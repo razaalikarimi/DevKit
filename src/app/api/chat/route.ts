@@ -22,8 +22,8 @@ export async function POST(req: Request) {
     systemMessage = "Be extremely brief and to the point. Avoid fluff."
   }
 
-  // Use the selected model or fallback to Flash
-  const selectedModel = model === "gemini-1.5-pro" ? "gemini-1.5-pro" : "gemini-1.5-flash"
+  // Use the selected model or fallback to Flash (Mapped to supported 2.5 versions)
+  const selectedModel = model === "gemini-1.5-pro" ? "gemini-2.5-pro" : "gemini-2.5-flash"
 
   // Map UI messages to CoreMessages for streamText
   const coreMessages = messages.map((m: any) => ({
