@@ -1,12 +1,12 @@
 import { google } from "@ai-sdk/google"
-import { streamText, generateId } from "ai"
+import { streamText, generateId, generateText } from "ai"
 import { db } from "@/lib/db"
 
 export const maxDuration = 30
 
 export async function POST(req: Request) {
   const userId = "demo-user-id"
-  const { messages, model, personality } = await req.json()
+  const { messages, model, personality, chatId } = await req.json()
   console.log("Incoming Messages:", JSON.stringify(messages, null, 2))
 
   // Construct a system message based on personality
@@ -30,6 +30,30 @@ export async function POST(req: Request) {
     role: m.role,
     content: m.parts ? m.parts.map((p: any) => p.text).join("") : m.content
   }))
+
+  // Fire and forget auto-titling for new chats
+  if (messages.length === 1 && chatId) {
+    const userMessage = coreMessages[0].content;
+    if (userMessage) {
+      Promise.resolve().then(async () => {
+        try {
+          const titleResponse = await generateText({
+            model: google("gemini-2.5-flash"),
+            system: "Generate a very short (2-4 words) concise title for this chat based on the user's message. Do not use quotes, labels, or prefixes. Just the title.",
+            prompt: userMessage,
+          })
+          const generatedTitle = titleResponse.text.trim().replace(/^["']|["']$/g, '').substring(0, 50)
+          
+          await db.conversation.update({
+            where: { id: chatId },
+            data: { title: generatedTitle }
+          })
+        } catch (err) {
+          console.error("[Auto-Title] Failed to generate title:", err)
+        }
+      })
+    }
+  }
 
   try {
     const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
