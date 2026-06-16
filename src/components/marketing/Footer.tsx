@@ -9,7 +9,7 @@ const FOOTER_LINKS = {
     { label: "Knowledge Hub",href: "/knowledge" },
     { label: "RepoMind",     href: "/repomind" },
     { label: "AI Tools",     href: "/tools" },
-    { label: "Workflows",    href: "/workflows" },
+    { label: "Workflows",    href: "#" },
   ],
   Company: [
     { label: "About Us", href: "#" },
