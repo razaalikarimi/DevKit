@@ -2,6 +2,7 @@
 
 import { useChat } from "@ai-sdk/react"
 import { useState, useEffect, useRef } from "react"
+import ReactMarkdown from "react-markdown"
 import { Send, User, Bot, StopCircle, MessageSquare, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -133,12 +134,12 @@ export const ChatWindow = () => {
 
                 {/* Bubble + actions */}
                 <div className={`flex flex-col gap-1.5 max-w-[78%] ${isUser ? "items-end" : "items-start"}`}>
-                  <div className={`px-4 py-3 text-sm leading-relaxed rounded-xl ${
+                  <div className={`px-4 py-3 text-sm leading-relaxed rounded-xl markdown-body ${
                     isUser
-                      ? "bg-indigo-600 text-white rounded-tr-sm"
+                      ? "bg-indigo-600 text-white rounded-tr-sm [&_strong]:text-white [&_h1]:text-white [&_h2]:text-white [&_h3]:text-white [&_h4]:text-white [&_li]:text-white [&_p]:text-white [&_a]:text-white"
                       : "bg-white text-slate-800 border border-slate-200 rounded-tl-sm shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
                   }`}>
-                    {content}
+                    <ReactMarkdown>{content}</ReactMarkdown>
                   </div>
                   {!isUser && (
                     <div className="flex items-center gap-3 px-1">

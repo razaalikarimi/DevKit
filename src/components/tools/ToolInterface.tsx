@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
+import ReactMarkdown from "react-markdown"
 
 interface ToolInterfaceProps {
   title: string
@@ -177,8 +178,8 @@ export const ToolInterface = ({
                     </p>
                   </motion.div>
                 ) : (
-                  <div className="text-slate-800 text-sm leading-relaxed whitespace-pre-wrap font-medium">
-                    {result}
+                  <div className="text-sm leading-relaxed whitespace-pre-wrap font-medium markdown-body">
+                    <ReactMarkdown>{result}</ReactMarkdown>
                   </div>
                 )}
               </AnimatePresence>
