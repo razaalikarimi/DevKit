@@ -26,9 +26,11 @@ export const ChatList = () => {
       setConversations(data)
     }
     fetch()
-  }, [])
+  }, [params.chatId])
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    e.preventDefault()
     await deleteConversation(id)
     setConversations(conversations.filter(c => c.id !== id))
     if (params.chatId === id) router.push("/chat")
@@ -62,6 +64,7 @@ export const ChatList = () => {
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleRename(chat.id)}
+                onClick={(e) => e.stopPropagation()}
                 className="h-6 px-1 py-0 bg-transparent border-none focus-visible:ring-0 text-foreground"
               />
             ) : (
@@ -72,15 +75,15 @@ export const ChatList = () => {
           <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
             {editingId === chat.id ? (
               <div className="flex gap-1">
-                <X size={14} className="hover:text-red-500 cursor-pointer" onClick={() => setEditingId(null)} />
-                <Check size={14} className="hover:text-emerald-500 cursor-pointer" onClick={() => handleRename(chat.id)} />
+                <X size={14} className="hover:text-red-500 cursor-pointer" onClick={(e) => { e.stopPropagation(); setEditingId(null); }} />
+                <Check size={14} className="hover:text-emerald-500 cursor-pointer" onClick={(e) => { e.stopPropagation(); handleRename(chat.id); }} />
               </div>
             ) : (
               /* I'll use a simple button for now instead of complex dropdown for speed */
               <Trash2 
                 size={14} 
                 className="text-zinc-600 hover:text-red-500 cursor-pointer transition-colors" 
-                onClick={() => handleDelete(chat.id)}
+                onClick={(e) => handleDelete(e, chat.id)}
               />
             )}
           </div>
