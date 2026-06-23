@@ -57,7 +57,7 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: "smooth" })
+      scrollRef.current.scrollIntoView({ behavior: "auto" })
     }
   }, [messages, isLoading])
 
