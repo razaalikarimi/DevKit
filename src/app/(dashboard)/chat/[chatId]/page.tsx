@@ -16,5 +16,5 @@ export default async function ChatIdPage({ params }: { params: { chatId: string 
     parts: [{ type: "text", text: m.content }]
   }))
 
-  return <ChatWindow initialMessages={initialMessages as any} />
+  return <ChatWindow key={params.chatId} initialMessages={initialMessages as any} />
 }
