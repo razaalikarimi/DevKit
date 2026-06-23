@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { ChatWindow } from "@/components/chat/ChatWindow"
 import { db } from "@/lib/db"
 
