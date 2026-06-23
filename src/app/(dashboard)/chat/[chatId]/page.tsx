@@ -2,10 +2,12 @@
 import { ChatWindow } from "@/components/chat/ChatWindow"
 import { db } from "@/lib/db"
 
-export default async function ChatIdPage({ params }: { params: { chatId: string } }) {
+export default async function ChatIdPage({ params }: { params: Promise<{ chatId: string }> }) {
+  const { chatId } = await params;
+
   // Fetch old messages from DB
   const messages = await db.message.findMany({
-    where: { conversationId: params.chatId },
+    where: { conversationId: chatId },
     orderBy: { createdAt: "asc" }
   })
 
@@ -17,5 +19,5 @@ export default async function ChatIdPage({ params }: { params: { chatId: string 
     parts: [{ type: "text", text: m.content }]
   }))
 
-  return <ChatWindow key={params.chatId} initialMessages={initialMessages as any} />
+  return <ChatWindow key={chatId} initialMessages={initialMessages as any} />
 }
