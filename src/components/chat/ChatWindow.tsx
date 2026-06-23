@@ -57,9 +57,9 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight)
+      scrollRef.current.scrollIntoView({ behavior: "smooth" })
     }
-  }, [messages])
+  }, [messages, isLoading])
 
   if (!isMounted) return null
 
@@ -98,7 +98,7 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
       </header>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 min-h-0" ref={scrollRef}>
+      <ScrollArea className="flex-1 min-h-0">
         <div className="max-w-3xl mx-auto px-6 py-8 space-y-6">
 
           {/* Empty state */}
@@ -165,7 +165,6 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
             )
           })}
 
-          {/* Loading indicator */}
           {isLoading && (
             <div className="flex gap-3">
               <div className="w-7 h-7 rounded-md bg-slate-100 text-slate-400 border border-slate-200 flex items-center justify-center flex-shrink-0">
@@ -178,7 +177,7 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
               </div>
             </div>
           )}
-
+          <div ref={scrollRef} className="h-4" />
         </div>
       </ScrollArea>
 
