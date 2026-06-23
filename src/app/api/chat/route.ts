@@ -31,6 +31,24 @@ export async function POST(req: Request) {
     content: m.parts ? m.parts.map((p: any) => p.text).join("") : m.content
   }))
 
+  // Save the latest user message
+  if (chatId && coreMessages.length > 0) {
+    const lastMessage = coreMessages[coreMessages.length - 1];
+    if (lastMessage.role === "user") {
+      try {
+        await db.message.create({
+          data: {
+            conversationId: chatId,
+            role: "user",
+            content: lastMessage.content
+          }
+        })
+      } catch (err) {
+        console.error("Failed to save user message:", err)
+      }
+    }
+  }
+
   // Fire and forget auto-titling for new chats
   if (messages.length === 1 && chatId) {
     const userMessage = coreMessages[0].content;
@@ -100,6 +118,21 @@ export async function POST(req: Request) {
       model: google(selectedModel),
       system: systemMessage,
       messages: coreMessages,
+      onFinish: async ({ text }) => {
+        if (chatId) {
+          try {
+            await db.message.create({
+              data: {
+                conversationId: chatId,
+                role: "assistant",
+                content: text
+              }
+            })
+          } catch (err) {
+            console.error("Failed to save assistant message:", err)
+          }
+        }
+      }
     })
 
     return result.toUIMessageStreamResponse()

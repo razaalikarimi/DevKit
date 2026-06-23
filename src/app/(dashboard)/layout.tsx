@@ -52,7 +52,7 @@ export default function DashboardLayout({
           </Button>
         </div>
 
-        <div className="flex-1 h-full overflow-hidden">
+        <div className="flex-1 min-h-0 h-full overflow-hidden">
           {children}
         </div>
       </main>

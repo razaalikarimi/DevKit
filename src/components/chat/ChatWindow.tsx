@@ -11,7 +11,9 @@ import { useParams } from "next/navigation"
 import { toast } from "sonner"
 import { DefaultChatTransport } from "ai"
 
-export const ChatWindow = () => {
+import { UIMessage } from "ai"
+
+export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessage[] }) => {
   const params = useParams()
   const chatId = params.chatId as string
   const [isMounted, setIsMounted] = useState(false)
@@ -28,6 +30,7 @@ export const ChatWindow = () => {
     regenerate,
   } = useChat({
     id: chatId,
+    messages: initialMessages,
     transport: new DefaultChatTransport({
       api: "/api/chat",
       body: {
@@ -95,7 +98,7 @@ export const ChatWindow = () => {
       </header>
 
       {/* Messages */}
-      <ScrollArea className="flex-1" ref={scrollRef}>
+      <ScrollArea className="flex-1 min-h-0" ref={scrollRef}>
         <div className="max-w-3xl mx-auto px-6 py-8 space-y-6">
 
           {/* Empty state */}
