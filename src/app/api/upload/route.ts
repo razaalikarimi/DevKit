@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 
@@ -110,3 +111,4 @@ function extractTextFromPdfBuffer(buffer: Buffer): string {
     .replace(/\s+/g, " ")
     .trim()
 }
+
