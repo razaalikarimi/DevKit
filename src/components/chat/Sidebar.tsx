@@ -24,22 +24,24 @@ import { createConversation } from "@/actions/chat"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Logo } from "@/components/Logo"
+import { useUsage } from "@/context/UsageContext"
 
 const routes = [
-  { label: "Overview",    icon: LayoutDashboard, href: "/dashboard", badge: null  },
-  { label: "AI Chat",     icon: MessageSquare,   href: "/chat",      badge: null  },
-  { label: "AI Tools",    icon: Zap,             href: "/tools",     badge: "New" },
-  { label: "Knowledge",   icon: FolderOpen,      href: "/knowledge", badge: null  },
-  { label: "RepoMind AI", icon: GitBranch,       href: "/repomind",  badge: null  },
-  { label: "Prompts",     icon: Star,            href: "/prompts",   badge: null  },
-  { label: "Team",        icon: Users,           href: "/team",      badge: null  },
-  { label: "Billing",     icon: CreditCard,      href: "/billing",   badge: null  },
+  { label: "Overview",       icon: LayoutDashboard, href: "/dashboard", badge: null  },
+  { label: "Chat",           icon: MessageSquare,   href: "/chat",      badge: null  },
+  { label: "Tools",          icon: Zap,             href: "/tools",     badge: "New" },
+  { label: "Knowledge",      icon: FolderOpen,      href: "/knowledge", badge: null  },
+  { label: "Repositories",   icon: GitBranch,       href: "/repomind",  badge: null  },
+  { label: "Prompts",        icon: Star,            href: "/prompts",   badge: null  },
+  { label: "Team",           icon: Users,           href: "/team",      badge: null  },
+  { label: "Billing",        icon: CreditCard,      href: "/billing",   badge: null  },
 ]
 
 export const Sidebar = () => {
   const pathname = usePathname()
   const router = useRouter()
   const [isMounted, setIsMounted] = useState(false)
+  const { isProUser } = useUsage()
 
   useEffect(() => { setIsMounted(true) }, [])
 
@@ -82,7 +84,7 @@ export const Sidebar = () => {
       <ScrollArea className="flex-1 px-3 py-3">
         <div className="space-y-0.5">
           {routes.map((route, i) => {
-            const isActive = pathname === route.href
+            const isActive = pathname === route.href || (route.href !== "/dashboard" && pathname.startsWith(route.href))
             return (
               <Link key={i} href={route.href}>
                 <div
@@ -132,15 +134,15 @@ export const Sidebar = () => {
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white" />
             </div>
             <div>
-              <div className="text-xs font-semibold text-slate-800">Admin</div>
-              <div className="text-[10px] text-slate-400">Premium Plan</div>
+              <div className="text-xs font-semibold text-slate-800">User</div>
+              <div className="text-[10px] text-slate-400">{isProUser ? "Pro Plan" : "Free Plan"}</div>
             </div>
           </div>
           <Button
             variant="ghost"
             size="icon"
             className="h-7 w-7 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md"
-            onClick={() => toast.info("Settings interface is under maintenance.")}
+            onClick={() => router.push("/billing")}
           >
             <Settings size={14} />
           </Button>

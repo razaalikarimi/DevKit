@@ -14,7 +14,8 @@ import {
 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useUsage } from "@/context/UsageContext"
 
 const tools = [
   {
@@ -68,15 +69,21 @@ const tools = [
 ]
 
 export default function ToolsPage() {
+  const router = useRouter()
+  const { incrementTool } = useUsage()
+
+  const handleToolClick = (e: React.MouseEvent, href: string) => {
+    e.preventDefault()
+    if (incrementTool()) {
+      router.push(href)
+    }
+  }
+
   return (
     <div className="p-8 h-full overflow-y-auto bg-[#F8FAFC]">
       <div className="max-w-6xl">
       <div className="mb-10">
-        <div className="flex items-center gap-2 mb-2">
-          <Zap size={14} className="text-amber-500" />
-          <span className="text-xs font-bold text-amber-500 uppercase tracking-widest">AI Tools</span>
-        </div>
-        <h1 className="text-3xl font-black text-slate-900">AI Tools Directory</h1>
+        <h1 className="text-3xl font-black text-slate-900">Tools Directory</h1>
         <p className="text-slate-500 text-sm mt-1">Specialized enterprise-grade generators for every business operation.</p>
       </div>
 
@@ -90,7 +97,7 @@ export default function ToolsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {tools.map((tool, i) => (
-          <Link key={i} href={tool.href}>
+          <a key={i} href={tool.href} onClick={(e) => handleToolClick(e, tool.href)}>
             <div className="card-base p-7 group h-full flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
@@ -107,7 +114,7 @@ export default function ToolsPage() {
                 Open Tool <ArrowRight size={12} />
               </div>
             </div>
-          </Link>
+          </a>
         ))}
       </div>
       </div>

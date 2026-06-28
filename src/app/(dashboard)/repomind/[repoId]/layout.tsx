@@ -21,10 +21,10 @@ export default function RepoDetailLayout({
 
   const tabs = [
     { name: "Overview", href: baseUrl, icon: Terminal, exact: true },
-    { name: "Chat & Agents", href: `${baseUrl}/chat`, icon: MessageSquare, exact: false },
     { name: "Architecture", href: `${baseUrl}/architecture`, icon: Cpu, exact: false },
     { name: "Security Audit", href: `${baseUrl}/security`, icon: ShieldAlert, exact: false },
     { name: "PR Reviews", href: `${baseUrl}/pull-requests`, icon: GitBranch, exact: false },
+    { name: "Chat & Agents", href: `${baseUrl}/chat`, icon: MessageSquare, exact: false },
   ];
 
   return (

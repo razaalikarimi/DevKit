@@ -1,8 +1,31 @@
 /* eslint-disable */
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { auth, currentUser } from "@clerk/nextjs/server"
+
+async function getDbUserId(): Promise<string> {
+  try {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) return "demo-user-id";
+    let user = await db.user.findUnique({ where: { clerkId } });
+    if (!user) {
+      const clerkUser = await currentUser();
+      user = await db.user.create({
+        data: {
+          clerkId,
+          email: clerkUser?.emailAddresses[0]?.emailAddress || `${clerkId}@example.com`,
+          name: clerkUser?.fullName || 'New User',
+        }
+      });
+    }
+    return user.id;
+  } catch {
+    return "demo-user-id";
+  }
+}
 
 export async function POST(req: Request) {
+  const userId = await getDbUserId()
   try {
     const formData = await req.formData()
     const file = formData.get("file") as File
@@ -53,10 +76,11 @@ export async function POST(req: Request) {
           name:   file.name,
           size:   file.size,
           type:   fileType,
+          content: content,
           url:    "local-storage",
           key:    docId,
           status: "COMPLETED",
-          userId: "demo-user-id",
+          userId: userId,
         },
       })
       docId = doc.id
@@ -111,4 +135,3 @@ function extractTextFromPdfBuffer(buffer: Buffer): string {
     .replace(/\s+/g, " ")
     .trim()
 }
-

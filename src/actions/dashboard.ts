@@ -1,10 +1,32 @@
 "use server"
 
 import { db } from "@/lib/db"
+import { auth, currentUser } from "@clerk/nextjs/server"
 
-const USER_ID = "demo-user-id"
+const getDbUserId = async () => {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) return "demo-user-id";
+
+  try {
+    let user = await db.user.findUnique({ where: { clerkId } });
+    if (!user) {
+      const clerkUser = await currentUser();
+      user = await db.user.create({
+        data: {
+          clerkId,
+          email: clerkUser?.emailAddresses[0]?.emailAddress || `${clerkId}@example.com`,
+          name: clerkUser?.fullName || 'New User',
+        }
+      });
+    }
+    return user.id;
+  } catch (error) {
+    return "demo-user-id";
+  }
+}
 
 export const getDashboardStats = async () => {
+  const userId = await getDbUserId();
   try {
     const [
       chatCount,
@@ -18,13 +40,13 @@ export const getDashboardStats = async () => {
     ] = await Promise.all([
       // Total conversations
       db.conversation.count({
-        where: { userId: USER_ID, isArchived: false },
+        where: { userId: userId, isArchived: false },
       }),
 
       // Total tokens used (sum of all message tokens)
       db.message.aggregate({
         where: {
-          conversation: { userId: USER_ID },
+          conversation: { userId: userId },
           tokens: { not: null },
         },
         _sum: { tokens: true },
@@ -32,25 +54,25 @@ export const getDashboardStats = async () => {
 
       // Total documents uploaded
       db.document.count({
-        where: { userId: USER_ID },
+        where: { userId: userId },
       }),
 
       // Total storage used in bytes
       db.document.aggregate({
-        where: { userId: USER_ID },
+        where: { userId: userId },
         _sum: { size: true },
       }),
 
       // User info (plan, credits)
       db.user.findFirst({
-        where: { id: USER_ID },
+        where: { id: userId },
         select: { plan: true, credits: true },
       }),
 
       // Recent 5 messages for activity feed
       db.message.findMany({
         where: {
-          conversation: { userId: USER_ID },
+          conversation: { userId: userId },
           role: "user",
         },
         orderBy: { createdAt: "desc" },
@@ -64,7 +86,7 @@ export const getDashboardStats = async () => {
 
       // Recent documents
       db.document.findMany({
-        where: { userId: USER_ID },
+        where: { userId: userId },
         orderBy: { createdAt: "desc" },
         take: 2,
         select: { name: true, createdAt: true },
@@ -72,7 +94,7 @@ export const getDashboardStats = async () => {
 
       // Recent chats
       db.conversation.findMany({
-        where: { userId: USER_ID, isArchived: false },
+        where: { userId: userId, isArchived: false },
         orderBy: { updatedAt: "desc" },
         take: 2,
         select: { title: true, updatedAt: true },

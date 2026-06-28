@@ -7,20 +7,35 @@ import ReactMarkdown from "react-markdown"
 import { Send, User, Bot, StopCircle, MessageSquare, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
 import { DefaultChatTransport } from "ai"
 
 import { UIMessage } from "ai"
+import { useUsage } from "@/context/UsageContext"
+import { getPrompts } from "@/actions/prompts"
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu"
+import { Wand2 } from "lucide-react"
 
 export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessage[] }) => {
+  const { incrementChat } = useUsage()
   const params = useParams()
   const chatId = params.chatId as string
   const [isMounted, setIsMounted] = useState(false)
+  const [prompts, setPrompts] = useState<any[]>([])
 
   useEffect(() => {
     setIsMounted(true)
+    const loadPrompts = async () => {
+      const data = await getPrompts()
+      setPrompts(data)
+    }
+    loadPrompts()
   }, [])
 
   const {
@@ -48,17 +63,24 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
   const [input, setInput] = useState("")
   const isLoading = status === "streaming" || status === "submitted"
   const scrollRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim() || isLoading) return
+    
+    // Check usage limit before sending
+    if (!incrementChat()) {
+      return
+    }
+
     sendMessage({ text: input })
     setInput("")
   }
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: "auto" })
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight
     }
   }, [messages, isLoading])
 
@@ -70,7 +92,7 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full overflow-hidden bg-white">
 
       {/* Header — clean, minimal */}
       <header className="h-14 flex items-center justify-between px-5 border-b border-slate-100 bg-white sticky top-0 z-10 flex-shrink-0">
@@ -79,7 +101,7 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
             <MessageSquare size={14} />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-slate-800 leading-tight">AI Chat</h2>
+            <h2 className="text-sm font-semibold text-slate-800 leading-tight">Chat</h2>
             <p className="text-[10px] text-slate-400 leading-tight">DevKit Assistant</p>
           </div>
         </div>
@@ -88,18 +110,11 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span className="text-xs text-slate-400">Connected</span>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-md"
-          >
-            <MoreHorizontal size={15} />
-          </Button>
         </div>
       </header>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 min-h-0">
+      <div ref={containerRef} className="flex-1 min-h-0 overflow-y-auto">
         <div className="max-w-3xl mx-auto px-6 py-8 space-y-6">
 
           {/* Empty state */}
@@ -180,7 +195,7 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
           )}
           <div ref={scrollRef} className="h-4" />
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Input — clean, professional */}
       <div className="px-5 py-4 bg-white border-t border-slate-100 flex-shrink-0">
@@ -189,7 +204,7 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Message DevKit AI..."
-            className="min-h-[52px] max-h-[180px] w-full bg-slate-50 border border-slate-200 focus-visible:ring-2 focus-visible:ring-indigo-300 focus-visible:border-indigo-400 rounded-xl pr-28 py-3.5 resize-none text-sm text-slate-800 placeholder:text-slate-400 leading-relaxed transition-all"
+            className="min-h-[52px] max-h-[180px] w-full bg-slate-50 border border-slate-200 focus-visible:ring-2 focus-visible:ring-indigo-300 focus-visible:border-indigo-400 rounded-xl pr-28 pl-12 py-3.5 resize-none text-sm text-slate-800 placeholder:text-slate-400 leading-relaxed transition-all"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault()
@@ -198,6 +213,30 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
               }
             }}
           />
+          <div className="absolute left-3 bottom-3">
+            {prompts.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors" title="Use a Prompt Template">
+                    <Wand2 size={16} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-64 mb-1">
+                  <div className="px-2 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Your Prompts</div>
+                  {prompts.map((p) => (
+                    <DropdownMenuItem 
+                      key={p.id} 
+                      className="flex flex-col items-start gap-1 p-2 cursor-pointer"
+                      onClick={() => setInput(p.prompt)}
+                    >
+                      <span className="font-medium text-slate-900">{p.name}</span>
+                      {p.description && <span className="text-xs text-slate-500 line-clamp-1">{p.description}</span>}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
           <div className="absolute right-3 bottom-3">
             {isLoading ? (
               <Button

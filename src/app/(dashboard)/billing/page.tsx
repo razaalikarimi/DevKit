@@ -1,178 +1,346 @@
 "use client"
 
-import { 
-  CreditCard, 
-  Check, 
-  Zap, 
-  Shield, 
-  History, 
-  ArrowUpRight,
-  ExternalLink,
-} from "lucide-react"
+import { useState } from "react"
+import { CreditCard, Check, AlertCircle, Download, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Script from "next/script"
+import { toast } from "sonner" 
+import { useUsage } from "@/context/UsageContext"
+import { useEffect } from "react"
 
 export default function BillingPage() {
+  const { isProUser, upgradeToPro } = useUsage()
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [currentPlan, setCurrentPlan] = useState("Free")
+  const [invoices, setInvoices] = useState<any[]>([])
+
+  useEffect(() => {
+    if (isProUser && currentPlan !== "Pro") {
+      setCurrentPlan("Pro")
+      setInvoices(prev => prev.length === 0 ? [{
+        id: `INV-${new Date().getFullYear()}-4309`,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        amount: "$19",
+        status: "Paid"
+      }] : prev)
+    }
+  }, [isProUser])
+
+  const handlePayment = async (planName: string, priceStr: string) => {
+    setIsProcessing(true)
+    
+    // Convert string price "$19" to number 1900 
+    const priceNum = parseInt(priceStr.replace(/[^0-9]/g, '')) * 100
+
+    try {
+      const response = await fetch('/api/razorpay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount: priceNum, planName }),
+      })
+
+      const order = await response.json()
+
+      if (order.error) {
+        toast.error("Failed to initialize payment")
+        setIsProcessing(false)
+        return
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "DevKit AI",
+        description: `Upgrade to ${planName}`,
+        order_id: order.id,
+        handler: function (response: any) {
+          toast.success("Payment Successful!", {
+            description: `Payment ID: ${response.razorpay_payment_id}`
+          })
+          
+          // --- DEMO UPDATE LOGIC ---
+          // Update the UI state to reflect the successful payment
+          const shortPlanName = planName.replace(" Plan", "")
+          setCurrentPlan(shortPlanName)
+          
+          if (shortPlanName === "Pro") {
+            upgradeToPro()
+          }
+
+          const newInvoice = {
+            id: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            amount: priceStr,
+            status: "Paid"
+          }
+          setInvoices(prev => [newInvoice, ...prev])
+          // -------------------------
+
+          setIsProcessing(false)
+        },
+        prefill: {
+          name: "DevKit User",
+          email: "user@devkit.io",
+          contact: "9999999999"
+        },
+        theme: {
+          color: "#0f172a" 
+        },
+        modal: {
+          ondismiss: function() {
+            setIsProcessing(false)
+          }
+        }
+      }
+
+      // @ts-ignore
+      const rzp = new window.Razorpay(options)
+      rzp.on('payment.failed', function (response: any){
+        toast.error("Payment failed", {
+          description: response.error.description
+        })
+        setIsProcessing(false)
+      })
+      
+      rzp.open()
+
+    } catch (error) {
+      console.error(error)
+      toast.error("Network error during payment")
+      setIsProcessing(false)
+    }
+  }
+
+  // Helper to determine plan limits based on current plan
+  const getPlanDetails = () => {
+    if (currentPlan === "Team") {
+      return { words: "Unlimited", limit: "Unlimited", percent: 10, max: "Unlimited words" }
+    } else if (currentPlan === "Pro") {
+      return { words: "2,300", limit: "100,000", percent: 2, max: "100,000 words" }
+    }
+    return { words: "2,300", limit: "10,000", percent: 23, max: "10,000 words" }
+  }
+  const details = getPlanDetails()
+
   return (
-    <div className="p-8 h-full overflow-y-auto bg-[#F8FAFC]">
-      <div className="max-w-6xl">
-      <div className="mb-10 space-y-2">
-        <div className="flex items-center gap-2 mb-2">
-          <CreditCard size={14} className="text-indigo-500" />
-          <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest">Billing</span>
-        </div>
-        <h1 className="text-3xl font-black text-slate-900">Financial Operations</h1>
-        <p className="text-slate-500 text-sm">Manage enterprise subscriptions, credit allocation, and transaction history.</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-12">
-        <div className="lg:col-span-2 card-base p-8 space-y-8">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-lg">
-              <Shield className="text-white" size={24} />
-            </div>
-            <div>
-              <div className="text-[10px] text-indigo-500 font-bold uppercase tracking-widest mb-1">Active Subscription</div>
-              <h2 className="text-2xl font-bold">Enterprise Core Plan</h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div>
-              <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] mb-2">Status</div>
-              <div className="text-sm font-bold text-emerald-600 flex items-center gap-2 uppercase tracking-widest">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Verified
-              </div>
-            </div>
-            <div>
-              <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] mb-2">Billing Term</div>
-              <div className="text-sm font-bold uppercase tracking-widest">Annual (FY 2026)</div>
-            </div>
-            <div>
-              <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] mb-2">Next Invoice</div>
-              <div className="text-sm font-bold uppercase tracking-widest">June 12, 2026</div>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-4 pt-6">
-            <Button className="enterprise-btn h-12 px-10 font-bold uppercase tracking-widest text-xs">
-              Modify Subscription
-            </Button>
-            <Button variant="outline" className="rounded-none border-border h-12 px-10 font-bold uppercase tracking-widest text-xs gap-3">
-              Payment Gateway
-              <ExternalLink size={16} />
-            </Button>
-          </div>
+    <div className="h-full overflow-y-auto bg-[#F8FAFC]">
+      <div className="max-w-5xl mx-auto p-6 md:p-10 text-slate-900">
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+        
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold mb-1">Billing & Subscription</h1>
+          <p className="text-slate-500 text-sm">Manage your plan, payment methods, and invoices.</p>
         </div>
 
-        <div className="p-8 bg-slate-50 border border-slate-200 rounded-2xl space-y-6">
-          <div className="flex items-center gap-3">
-            <Zap className="text-primary" size={20} />
-            <h3 className="font-bold uppercase tracking-widest text-xs">Resource Quota</h3>
-          </div>
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
-                <span className="text-muted-foreground">Word Generation</span>
-                <span>850k / 1.0M</span>
+        {/* Current Plan Overview */}
+        <div className="bg-white border border-slate-200 rounded-xl p-6 mb-10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-lg font-medium">{currentPlan} Plan</h2>
+              <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 text-xs font-semibold uppercase tracking-wider">Active</span>
+            </div>
+            <p className="text-slate-500 text-sm mb-4">
+              {currentPlan === "Free" 
+                ? "You are currently on the free tier. Upgrade to unlock more features."
+                : "You are on a premium tier. Enjoy enhanced AI capabilities."}
+            </p>
+            
+            <div className="max-w-xs">
+              <div className="flex justify-between text-xs mb-1.5 font-medium text-slate-600">
+                <span>Monthly Usage</span>
+                <span>{details.words} / {details.limit} words</span>
               </div>
-              <div className="h-1.5 bg-border rounded-none overflow-hidden">
-                <div className="h-full bg-primary w-[85%]" />
+              <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div 
+                  className="bg-indigo-600 h-full rounded-full transition-all duration-1000 ease-out" 
+                  style={{ width: `${details.percent}%` }}
+                ></div>
               </div>
             </div>
-            <div className="pt-6 border-t border-border space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Consumption Rate</span>
-                <span className="text-sm font-bold">12.5k / day</span>
-              </div>
-            </div>
-            <Button variant="ghost" className="w-full text-primary hover:bg-primary/5 gap-2 text-[10px] font-bold uppercase tracking-[0.2em] h-12 border border-primary/20">
-              Increase Allocation
-              <ArrowUpRight size={14} />
-            </Button>
           </div>
-        </div>
-      </div>
-
-      <div className="mb-8">
-        <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground mb-8">Platform Tiers</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {[
-            { 
-              name: "Standard", 
-              price: "$19", 
-              features: ["50k words/mo", "Standard AI Engine", "Shared compute", "Standard support"],
-              current: false 
-            },
-            { 
-              name: "Enterprise Core", 
-              price: "$49", 
-              features: ["500k words/mo", "Advanced AI Engine", "Priority compute", "24/7 Support", "Semantic Search"],
-              current: true 
-            },
-            { 
-              name: "Custom (SLA)", 
-              price: "Contact", 
-              features: ["Unlimited tokens", "Private compute", "On-premise option", "Dedicated account manager"],
-              current: false 
-            }
-          ].map((plan, i) => (
-            <div key={i} className={`p-10 flex flex-col justify-between ${plan.current ? "bg-white ring-1 ring-primary relative z-10" : "bg-white opacity-60"}`}>
-              <div className="space-y-8">
-                <div>
-                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground mb-2">{plan.name}</h3>
-                  <div className="text-4xl font-bold">{plan.price}</div>
-                </div>
-                <div className="space-y-4">
-                  {plan.features.map((feature, j) => (
-                    <div key={j} className="flex items-center gap-3 text-xs font-medium text-muted-foreground">
-                      <Check size={14} className="text-primary shrink-0" />
-                      {feature}
-                    </div>
-                  ))}
-                </div>
-              </div>
+          
+          <div className="flex-shrink-0">
+            {currentPlan === "Free" ? (
               <Button 
-                className={`mt-10 h-12 rounded-none uppercase tracking-widest text-[10px] font-bold ${plan.current ? "bg-primary text-white" : "bg-secondary text-foreground hover:bg-border"}`}
-                disabled={plan.current}
+                onClick={() => handlePayment("Pro Plan", "$19")}
+                disabled={isProcessing}
+                className="bg-slate-900 hover:bg-slate-800 text-white shadow-sm"
               >
-                {plan.current ? "Current Allocation" : "Request Upgrade"}
+                {isProcessing ? "Processing..." : "Upgrade to Pro"}
+              </Button>
+            ) : (
+              <Button variant="outline" className="shadow-sm">
+                Manage Subscription
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Pricing Plans */}
+        <div className="mb-12">
+          <h2 className="text-lg font-semibold mb-4">Available Plans</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            {/* Plan 1 */}
+            <div className={`border ${currentPlan === "Free" ? "border-indigo-600 ring-1 ring-indigo-600" : "border-slate-200"} bg-white rounded-xl p-6 shadow-sm flex flex-col relative transition-all`}>
+              <h3 className="font-medium text-slate-900 mb-2">Free</h3>
+              <div className="mb-4">
+                <span className="text-3xl font-bold">$0</span>
+                <span className="text-slate-500 text-sm"> / month</span>
+              </div>
+              <ul className="space-y-3 mb-8 flex-1 text-sm text-slate-600">
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-slate-900 mt-0.5" />
+                  <span>10,000 words per month</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-slate-900 mt-0.5" />
+                  <span>Standard AI models</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-slate-900 mt-0.5" />
+                  <span>Community support</span>
+                </li>
+              </ul>
+              <Button variant={currentPlan === "Free" ? "secondary" : "outline"} className="w-full" disabled={currentPlan === "Free"} onClick={() => handlePayment("Free Plan", "$0")}>
+                {currentPlan === "Free" ? "Current Plan" : "Downgrade"}
               </Button>
             </div>
-          ))}
-        </div>
-      </div>
 
-      <div className="card-base overflow-hidden mt-10">
-        <div className="p-8 border-b border-border flex items-center justify-between">
-          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
-            <History size={16} />
-            Ledger History
-          </h3>
-          <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest text-primary">Export Statements</Button>
-        </div>
-        <div className="divide-y divide-border">
-          {[
-            { id: "INV-2026-001", date: "May 12, 2026", amount: "$49.00", status: "Processed" },
-            { id: "INV-2026-002", date: "April 12, 2026", amount: "$49.00", status: "Processed" },
-            { id: "INV-2026-003", date: "March 12, 2026", amount: "$19.00", status: "Processed" },
-          ].map((invoice, i) => (
-            <div key={i} className="p-6 flex items-center justify-between hover:bg-secondary/30 transition-colors">
-              <div className="flex items-center gap-12">
-                <div className="text-sm font-bold">{invoice.id}</div>
-                <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{invoice.date}</div>
-              </div>
-              <div className="flex items-center gap-12">
-                <div className="text-sm font-bold">{invoice.amount}</div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">
-                  {invoice.status}
+            {/* Plan 2 */}
+            <div className={`border-2 ${currentPlan === "Pro" ? "border-indigo-600 bg-indigo-50/10" : "border-slate-900 bg-white"} rounded-xl p-6 shadow-sm flex flex-col relative transition-all`}>
+              {currentPlan !== "Pro" && (
+                <div className="absolute top-0 right-6 -translate-y-1/2 bg-slate-900 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  Popular
                 </div>
-                <ExternalLink size={14} className="text-muted-foreground cursor-pointer hover:text-primary transition-colors" />
+              )}
+              {currentPlan === "Pro" && (
+                <div className="absolute top-0 right-6 -translate-y-1/2 bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  Active
+                </div>
+              )}
+              <h3 className="font-medium text-slate-900 mb-2">Pro</h3>
+              <div className="mb-4">
+                <span className="text-3xl font-bold">$19</span>
+                <span className="text-slate-500 text-sm"> / month</span>
               </div>
+              <ul className="space-y-3 mb-8 flex-1 text-sm text-slate-600">
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-slate-900 mt-0.5" />
+                  <span>100,000 words per month</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-slate-900 mt-0.5" />
+                  <span>Advanced reasoning models</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-slate-900 mt-0.5" />
+                  <span>Priority email support</span>
+                </li>
+              </ul>
+              <Button 
+                onClick={() => handlePayment("Pro Plan", "$19")}
+                disabled={isProcessing || currentPlan === "Pro"}
+                className={`w-full ${currentPlan === "Pro" ? "bg-slate-100 text-slate-400 hover:bg-slate-100" : "bg-slate-900 hover:bg-slate-800 text-white"}`}
+              >
+                {currentPlan === "Pro" ? "Current Plan" : (isProcessing ? "Processing..." : "Upgrade")}
+              </Button>
             </div>
-          ))}
+
+            {/* Plan 3 */}
+            <div className={`border ${currentPlan === "Team" ? "border-indigo-600 ring-1 ring-indigo-600" : "border-slate-200"} bg-white rounded-xl p-6 shadow-sm flex flex-col transition-all`}>
+              <h3 className="font-medium text-slate-900 mb-2">Team</h3>
+              <div className="mb-4">
+                <span className="text-3xl font-bold">$49</span>
+                <span className="text-slate-500 text-sm"> / month</span>
+              </div>
+              <ul className="space-y-3 mb-8 flex-1 text-sm text-slate-600">
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-slate-900 mt-0.5" />
+                  <span>Unlimited words</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-slate-900 mt-0.5" />
+                  <span>Custom AI fine-tuning</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-slate-900 mt-0.5" />
+                  <span>24/7 dedicated support</span>
+                </li>
+              </ul>
+              <Button 
+                onClick={() => handlePayment("Team Plan", "$49")}
+                disabled={isProcessing || currentPlan === "Team"}
+                variant={currentPlan === "Team" ? "secondary" : "outline"} 
+                className="w-full"
+              >
+                {currentPlan === "Team" ? "Current Plan" : (isProcessing ? "Processing..." : "Upgrade")}
+              </Button>
+            </div>
+
+          </div>
         </div>
-      </div>
+
+        {/* Invoice History */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Invoice History</h2>
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            {invoices.length === 0 ? (
+              <div className="p-8 text-center text-slate-500">
+                <div className="flex justify-center mb-3">
+                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100">
+                    <AlertCircle size={20} className="text-slate-400" />
+                  </div>
+                </div>
+                <p className="text-sm font-medium text-slate-900 mb-1">No invoices yet</p>
+                <p className="text-sm">You haven't made any payments yet. Once you subscribe, your invoices will appear here.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {invoices.map((inv, idx) => (
+                  <div key={idx} className="p-5 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500">
+                        <FileText size={18} />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-slate-900">{inv.id}</div>
+                        <div className="text-xs text-slate-500">{inv.date}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-900">{inv.amount}</div>
+                        <div className="text-xs font-medium text-emerald-600">{inv.status}</div>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-slate-400 hover:text-indigo-600"
+                        onClick={() => {
+                          const receipt = `DEVKIT AI - PAYMENT RECEIPT\n${'='.repeat(40)}\n\nInvoice ID: ${inv.id}\nDate: ${inv.date}\nPlan: ${currentPlan}\nAmount: ${inv.amount}\nStatus: ${inv.status}\n\nThank you for your payment!\nDevKit AI Platform`
+                          const blob = new Blob([receipt], { type: 'text/plain' })
+                          const url = URL.createObjectURL(blob)
+                          const a = document.createElement('a')
+                          a.href = url
+                          a.download = `${inv.id}-receipt.txt`
+                          a.click()
+                          URL.revokeObjectURL(url)
+                        }}
+                      >
+                        <Download size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
       </div>
     </div>
   )

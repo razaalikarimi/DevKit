@@ -8,7 +8,7 @@ import {
   Search, 
   Copy, 
   Trash2, 
-  Terminal, 
+  MessageSquare, 
   Share2,
   Lock,
   Loader2
@@ -54,7 +54,7 @@ export default function PromptsPage() {
     if (!name || !content) return
     try {
       await createPrompt({ name, description, prompt: content, isPublic })
-      toast.success("Prompt template added.")
+      toast.success("Prompt created successfully")
       setOpen(false)
       fetchPrompts()
       setName("")
@@ -68,13 +68,13 @@ export default function PromptsPage() {
 
   const handleDelete = async (id: string) => {
     await deletePrompt(id)
-    toast.success("Template removed.")
+    toast.success("Prompt deleted")
     fetchPrompts()
   }
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    toast.success("Prompt copied to clipboard.")
+    toast.success("Copied to clipboard")
   }
 
   const filteredPrompts = prompts.filter(p => 
@@ -83,143 +83,144 @@ export default function PromptsPage() {
   )
 
   return (
-    <div className="p-8 h-full overflow-y-auto bg-[#F8FAFC]">
-      <div className="max-w-6xl">
-      <div className="flex items-center justify-between mb-10">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Terminal size={14} className="text-purple-500" />
-            <span className="text-xs font-bold text-purple-500 uppercase tracking-widest">Prompts</span>
+    <div className="p-8 h-full overflow-y-auto bg-slate-50/50">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Prompts</h1>
+            <p className="text-slate-500 text-sm mt-1">Manage and reuse your custom prompts.</p>
           </div>
-          <h1 className="text-3xl font-black text-slate-900">System Prompts</h1>
-          <p className="text-slate-500 text-sm mt-1">Engineered instructions and reusable AI templates.</p>
-        </div>
-        
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger className="enterprise-btn h-12 px-8">
-            <Plus size={18} />
-            Register Template
-          </DialogTrigger>
-          <DialogContent className="bg-white border-border rounded-none text-foreground max-w-2xl p-8">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold border-b border-border pb-4">New Template Configuration</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-8 py-6">
-              <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Asset Name</Label>
-                <Input 
-                  placeholder="e.g. Legal Compliance Reviewer" 
-                  className="bg-white border-border rounded-none h-12"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Operational Description</Label>
-                <Input 
-                  placeholder="Define the primary use case..." 
-                  className="bg-white border-border rounded-none h-12"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">System Logic / Instructions</Label>
-                <Textarea 
-                  placeholder="Provide explicit AI instructions..." 
-                  className="bg-white border-border rounded-none min-h-[200px]"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                />
-              </div>
-              <div className="flex items-center justify-between p-4 bg-secondary/50 border border-border">
-                <div className="space-y-1">
-                  <Label className="text-sm font-bold">Public Accessibility</Label>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Share this asset across the workspace</p>
+          
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger className="h-10 px-5 rounded-lg text-sm font-medium flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+              <Plus size={16} />
+              New Prompt
+            </DialogTrigger>
+            <DialogContent className="bg-white rounded-xl max-w-xl p-6 shadow-lg border border-slate-200">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold text-slate-900">Create Prompt</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-5 py-4">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Name</Label>
+                  <Input 
+                    placeholder="e.g. Code Reviewer" 
+                    className="bg-slate-50 border-slate-200 h-10 text-sm"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
-                <Switch checked={isPublic} onCheckedChange={setIsPublic} />
-              </div>
-            </div>
-            <DialogFooter className="border-t border-border pt-6">
-              <Button variant="ghost" onClick={() => setOpen(false)} className="rounded-none">Discard</Button>
-              <Button onClick={handleCreate} className="enterprise-btn h-12 px-10">Confirm Asset</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      <div className="mb-12 relative max-w-md">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-        <Input 
-          placeholder="Filter templates..." 
-          className="h-12 pl-12 bg-white border-border rounded-none focus-visible:ring-primary"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {loading ? (
-          <div className="col-span-full py-20 bg-white text-center">
-            <Loader2 className="animate-spin mx-auto text-primary" size={32} />
-          </div>
-        ) : filteredPrompts.length === 0 ? (
-          <div className="col-span-full py-32 bg-white flex flex-col items-center justify-center text-center opacity-40">
-            <Terminal size={48} className="mb-4" />
-            <p className="font-bold uppercase tracking-widest text-xs">No assets identified</p>
-          </div>
-        ) : (
-          filteredPrompts.map((prompt) => (
-            <div key={prompt.id} className="p-8 bg-white hover:bg-secondary/50 transition-colors group flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-8">
-                  <Terminal size={28} className="text-primary" />
-                  <div className="flex items-center gap-2">
-                    {prompt.isPublic ? (
-                      <div className="px-2 py-1 bg-primary/10 text-primary text-[8px] font-bold uppercase tracking-widest flex items-center gap-1">
-                        <Share2 size={10} />
-                        Public
-                      </div>
-                    ) : (
-                      <div className="px-2 py-1 bg-secondary text-muted-foreground text-[8px] font-bold uppercase tracking-widest flex items-center gap-1">
-                        <Lock size={10} />
-                        Internal
-                      </div>
-                    )}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Description</Label>
+                  <Input 
+                    placeholder="What does this prompt do?" 
+                    className="bg-slate-50 border-slate-200 h-10 text-sm"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Prompt Content</Label>
+                  <Textarea 
+                    placeholder="Write your prompt instructions here..." 
+                    className="bg-slate-50 border-slate-200 min-h-[150px] text-sm resize-y"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium text-slate-900">Workspace Visibility</Label>
+                    <p className="text-xs text-slate-500">Allow others in your workspace to use this prompt</p>
                   </div>
+                  <Switch checked={isPublic} onCheckedChange={setIsPublic} />
                 </div>
-                
-                <h3 className="text-xl font-bold mb-3">{prompt.name}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-3 mb-8 leading-relaxed">
-                  {prompt.description || "No operational description provided."}
-                </p>
               </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpen(false)} className="h-10 text-sm">Cancel</Button>
+                <Button onClick={handleCreate} className="h-10 text-sm bg-indigo-600 hover:bg-indigo-700 text-white">Save Prompt</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
 
-              <div className="flex items-center justify-between pt-8 border-t border-border">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary p-0 hover:bg-transparent"
-                  onClick={() => copyToClipboard(prompt.prompt)}
-                >
-                  <Copy size={14} className="mr-2" />
-                  Copy Sequence
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-10 w-10 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => handleDelete(prompt.id)}
-                >
-                  <Trash2 size={18} />
-                </Button>
-              </div>
+        <div className="mb-8 relative max-w-md">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+          <Input 
+            placeholder="Search prompts..." 
+            className="h-10 pl-10 bg-white border-slate-200 rounded-lg text-sm shadow-sm"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {loading ? (
+            <div className="col-span-full py-20 text-center">
+              <Loader2 className="animate-spin mx-auto text-indigo-500 mb-2" size={28} />
+              <p className="text-sm text-slate-500">Loading prompts...</p>
             </div>
-          ))
-        )}
-      </div>
+          ) : filteredPrompts.length === 0 ? (
+            <div className="col-span-full py-20 bg-white rounded-xl border border-slate-200 border-dashed flex flex-col items-center justify-center text-center">
+              <div className="h-12 w-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-3">
+                <MessageSquare size={24} />
+              </div>
+              <p className="text-sm font-medium text-slate-900">No prompts found</p>
+              <p className="text-xs text-slate-500 mt-1">Create your first prompt to get started.</p>
+            </div>
+          ) : (
+            filteredPrompts.map((prompt) => (
+              <div key={prompt.id} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="h-10 w-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center">
+                      <MessageSquare size={18} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {prompt.isPublic ? (
+                        <div className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-medium flex items-center gap-1.5">
+                          <Share2 size={12} />
+                          Shared
+                        </div>
+                      ) : (
+                        <div className="px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-500 rounded-full text-[10px] font-medium flex items-center gap-1.5">
+                          <Lock size={12} />
+                          Private
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-base font-semibold text-slate-900 mb-1.5">{prompt.name}</h3>
+                  <p className="text-sm text-slate-500 line-clamp-2 mb-6">
+                    {prompt.description || "No description provided."}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 -ml-2 h-8"
+                    onClick={() => copyToClipboard(prompt.prompt)}
+                  >
+                    <Copy size={14} className="mr-1.5" />
+                    Copy
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleDelete(prompt.id)}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   )
 }
-

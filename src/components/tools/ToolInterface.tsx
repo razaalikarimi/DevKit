@@ -21,6 +21,10 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import ReactMarkdown from "react-markdown"
 
+import { DefaultChatTransport } from "ai"
+
+import { useUsage } from "@/context/UsageContext"
+
 interface ToolInterfaceProps {
   title: string
   description: string
@@ -41,12 +45,19 @@ export const ToolInterface = ({
   prompt, 
   inputs 
 }: ToolInterfaceProps) => {
+  const { incrementTool } = useUsage()
   const [formState, setFormState] = useState<Record<string, string>>({})
   const [copied, setCopied] = useState(false)
 
   const { messages, sendMessage, status, setMessages } = useChat({
-    api: "/api/chat",
-  } as any) as any
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+      body: {
+        personality: "Professional",
+        model: "gemini-2.5-flash"
+      }
+    }),
+  })
 
   const isLoading = status === "streaming" || status === "submitted"
   const lastMessage = messages[messages.length - 1]
@@ -59,6 +70,10 @@ export const ToolInterface = ({
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!incrementTool()) {
+      return
+    }
     
     // Construct the final prompt
     let finalPrompt = `${prompt}\n\nInputs:\n`
@@ -76,6 +91,18 @@ export const ToolInterface = ({
     setCopied(true)
     toast.success("Asset copied to clipboard.")
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const downloadResult = () => {
+    if (!result) return
+    const blob = new Blob([result], { type: "text/markdown" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `${title.replace(/\s+/g, '-').toLowerCase()}-output.md`
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success("File downloaded.")
   }
 
   return (
@@ -158,6 +185,7 @@ export const ToolInterface = ({
                   variant="ghost" 
                   size="icon" 
                   disabled={!result}
+                  onClick={downloadResult}
                   className="h-9 w-9 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg"
                 >
                   <Download size={16} />
@@ -186,14 +214,7 @@ export const ToolInterface = ({
               </AnimatePresence>
             </div>
             
-            <div className="mt-6 pt-6 border-t border-slate-200 flex items-center justify-between">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                Encryption: AES-256
-              </div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">
-                Verified Output
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

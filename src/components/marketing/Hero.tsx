@@ -1,144 +1,85 @@
 "use client"
 
-import { ArrowRight, CheckCircle2 } from "lucide-react"
+import { ArrowRight, Search, Code2, Sparkles, Command } from "lucide-react"
 import Link from "next/link"
 
 export const Hero = () => {
   return (
-    <section className="relative bg-white">
-      <div className="section-padding max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
-          {/* Left — Content */}
-          <div>
-
-            {/* Headline */}
-            <h1 className="text-4xl md:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-slate-900 leading-[1.12] mb-6">
-              Develop & deploy
-              <br />
-              <span className="text-indigo-600">intelligent workflows</span>
-              <br />
-              with confidence.
-            </h1>
-
-            {/* Description */}
-            <p className="text-[15px] text-slate-500 max-w-lg leading-relaxed mb-8">
-              DevKit unifies AI chat, knowledge retrieval, code intelligence, and team workflows into one powerful platform — built for teams that move fast.
-            </p>
-
-            {/* Checklist */}
-            <ul className="space-y-2.5 mb-8">
-              {[
-                "RAG-powered knowledge base",
-                "Real-time AI chat with memory",
-                "Repository intelligence & code review",
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-sm text-slate-600">
-                  <CheckCircle2 size={15} className="text-indigo-500 flex-shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap gap-3">
-              <Link href="/dashboard">
-                <button className="h-11 px-6 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-colors flex items-center gap-2">
-                  Start Building Free
-                  <ArrowRight size={14} />
-                </button>
-              </Link>
-              <Link href="#solutions">
-                <button className="h-11 px-6 rounded-md border border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-700 text-sm font-medium transition-colors">
-                  View Solutions
-                </button>
-              </Link>
-            </div>
-
-            {/* Stats Row */}
-            <div className="flex flex-wrap gap-10 pt-8 mt-10 border-t border-slate-100">
-              {[
-                { label: "Uptime SLA",      value: "99.9%" },
-                { label: "API Latency",     value: "<50ms" },
-                { label: "Security Schema", value: "SOC2"  },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div className="text-xl font-bold text-slate-900">{stat.value}</div>
-                  <div className="text-xs text-slate-400 font-medium mt-0.5">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right — Clean Browser / UI Preview */}
-          <div className="hidden lg:block">
-            <div className="w-full max-w-[480px] ml-auto rounded-xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.07)] overflow-hidden">
-
-              {/* Browser chrome */}
-              <div className="bg-slate-50 border-b border-slate-200 h-10 px-4 flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-slate-200" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-slate-200" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-slate-200" />
-                </div>
-                <div className="flex-1 mx-4">
-                  <div className="h-5 bg-white border border-slate-200 rounded text-[10px] text-slate-400 flex items-center px-2 font-mono max-w-[200px]">
-                    app.devkit.io/chat
-                  </div>
-                </div>
-              </div>
-
-              {/* Page header row */}
-              <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-3">
-                <div className="w-6 h-6 rounded-md bg-indigo-600 flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-[9px] font-black">D</span>
-                </div>
-                <span className="text-xs font-semibold text-slate-700">DevKit AI Chat</span>
-                <div className="ml-auto flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="text-[10px] text-slate-400">Connected</span>
-                </div>
-              </div>
-
-              {/* Chat messages */}
-              <div className="p-5 space-y-4 bg-white">
-                {/* User message */}
-                <div className="flex gap-2.5 flex-row-reverse">
-                  <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
-                    U
-                  </div>
-                  <div className="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl rounded-tr-sm text-xs leading-relaxed max-w-[75%]">
-                    How do I index my repository for code search?
-                  </div>
-                </div>
-
-                {/* AI message */}
-                <div className="flex gap-2.5">
-                  <div className="w-7 h-7 rounded-md bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 text-[10px] font-bold flex-shrink-0">
-                    AI
-                  </div>
-                  <div className="bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl rounded-tl-sm text-xs text-slate-700 max-w-[75%] space-y-1.5 leading-relaxed">
-                    <p className="font-semibold text-slate-800">RepoMind indexes your codebase automatically.</p>
-                    <p>Add your remote URL under Settings → Repositories. We parse, index, and build a semantic graph of your code.</p>
-                    <div className="flex gap-1.5 pt-0.5">
-                      <span className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-[10px] text-slate-500 font-medium">Graph RAG</span>
-                      <span className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-[10px] text-slate-500 font-medium">99.2% Accuracy</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Input row */}
-                <div className="mt-2 border border-slate-200 rounded-lg bg-slate-50 flex items-center gap-3 px-3.5 py-2.5">
-                  <span className="text-xs text-slate-400 flex-1">Message DevKit AI…</span>
-                  <div className="w-6 h-6 rounded-md bg-indigo-600 flex items-center justify-center flex-shrink-0">
-                    <ArrowRight size={11} className="text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+    <section className="relative w-full bg-[#fafafa] overflow-hidden pt-16 pb-32 border-b border-slate-200/50">
+      {/* Absolute minimalist background */}
+      <div className="absolute inset-0 flex justify-center pointer-events-none overflow-hidden">
+        <div className="w-full max-w-[1200px] h-full relative">
+          <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] rounded-full bg-gradient-to-tr from-slate-200/40 to-slate-100/10 blur-[100px]" />
+          <div className="absolute top-[20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-indigo-100/20 to-transparent blur-[100px]" />
         </div>
+      </div>
+
+      <div className="relative z-10 max-w-[1000px] mx-auto px-6 text-center">
+        
+        {/* Elegant Headline */}
+        <h1 className="text-[3.5rem] md:text-[5.5rem] font-bold tracking-[-0.04em] text-[#111] mb-6 leading-[1.05]">
+          The intelligent <br className="hidden md:block" />
+          coding workspace.
+        </h1>
+
+        {/* Crisp Sub-headline */}
+        <p className="text-[17px] md:text-[19px] text-[#666] max-w-2xl mx-auto leading-[1.6] mb-12">
+          Stop context switching. DevKit brings codebase intelligence, real-time code reviews, and AI-powered search directly into one unified workflow.
+        </p>
+
+        {/* Clean Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link href="/dashboard">
+            <button className="h-[46px] px-6 rounded-lg bg-[#111] hover:bg-[#222] text-white text-[15px] font-medium transition-colors flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(0,0,0,0.1)]">
+              Start Building
+              <ArrowRight size={15} />
+            </button>
+          </Link>
+          <Link href="#solutions" className="w-full sm:w-auto">
+            <button className="w-full sm:w-auto h-12 px-6 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-900 text-sm font-medium transition-colors flex items-center justify-center gap-2">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              See How It Works
+            </button>
+          </Link>
+        </div>
+
+        {/* Premium Command Palette Mockup */}
+        <div className="mt-24 max-w-[640px] mx-auto">
+          <div className="w-full rounded-2xl border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_12px_40px_-12px_rgba(0,0,0,0.1)] p-2 hover:-translate-y-2 transition-transform duration-500 ease-out">
+            <div className="w-full rounded-xl border border-slate-200/80 bg-white overflow-hidden shadow-sm text-left">
+              
+              {/* Search Bar */}
+              <div className="flex items-center gap-3 px-4 py-4 border-b border-slate-100">
+                <Search size={18} className="text-slate-400" />
+                <span className="text-[15px] text-slate-400 font-medium">How does the auth module work?</span>
+                <div className="ml-auto flex items-center gap-1.5">
+                  <kbd className="hidden sm:inline-flex items-center justify-center h-5 px-1.5 rounded border border-slate-200 bg-slate-50 text-[10px] font-sans font-semibold text-slate-500">⌘</kbd>
+                  <kbd className="hidden sm:inline-flex items-center justify-center h-5 px-1.5 rounded border border-slate-200 bg-slate-50 text-[10px] font-sans font-semibold text-slate-500">K</kbd>
+                </div>
+              </div>
+
+              {/* Menu Items */}
+              <div className="p-2 bg-[#fcfcfc]">
+                <div className="flex items-center gap-3 px-3 py-3 rounded-lg bg-indigo-50 border border-indigo-100/50 text-indigo-700 cursor-default mb-1">
+                  <Sparkles size={16} className="text-indigo-500" />
+                  <span className="text-[14px] font-medium">Ask AI about "auth module"</span>
+                  <kbd className="ml-auto hidden sm:inline-flex items-center justify-center h-5 px-1.5 rounded text-[10px] font-sans font-medium text-indigo-400">↵</kbd>
+                </div>
+                
+                <div className="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 hover:bg-slate-50 cursor-default mb-1">
+                  <Code2 size={16} className="text-slate-400" />
+                  <span className="text-[14px] font-medium">Search across codebase</span>
+                </div>
+                
+                <div className="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 hover:bg-slate-50 cursor-default">
+                  <Command size={16} className="text-slate-400" />
+                  <span className="text-[14px] font-medium">Generate tests for AuthController</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
   )

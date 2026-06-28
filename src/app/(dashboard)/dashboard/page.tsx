@@ -16,25 +16,25 @@ import { getDashboardStats } from "@/actions/dashboard"
 
 const QUICK_ACTIONS = [
   {
-    title: "AI Chat",
-    desc:  "Interact with the core generative AI model in real-time.",
+    title: "Chat",
+    desc:  "Interact with the generative model in real-time.",
     href:  "/chat",
     icon:  MessageSquare,
   },
   {
-    title: "AI Tools",
+    title: "Tools",
     desc:  "Generate blogs, emails, code snippets and tailored assets.",
     href:  "/tools",
     icon:  Zap,
   },
   {
     title: "Knowledge Hub",
-    desc:  "Feed custom files & documents for AI-powered retrieval.",
+    desc:  "Feed custom files & documents for context-powered retrieval.",
     href:  "/knowledge",
     icon:  FolderOpen,
   },
   {
-    title: "RepoMind AI",
+    title: "RepoMind",
     desc:  "Map, audit, and get insights from your code repositories.",
     href:  "/repomind",
     icon:  GitBranch,
