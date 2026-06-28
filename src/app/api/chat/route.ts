@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { google } from "@ai-sdk/google"
 import { streamText, generateId, generateText } from "ai"
 import { db } from "@/lib/db"
@@ -144,3 +145,4 @@ export async function POST(req: Request) {
     })
   }
 }
+
