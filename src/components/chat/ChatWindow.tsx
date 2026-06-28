@@ -216,11 +216,13 @@ export const ChatWindow = ({ initialMessages = [] }: { initialMessages?: UIMessa
           <div className="absolute left-3 bottom-3">
             {prompts.length > 0 && (
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors" title="Use a Prompt Template">
-                    <Wand2 size={16} />
-                  </Button>
-                </DropdownMenuTrigger>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors" title="Use a Prompt Template">
+                      <Wand2 size={16} />
+                    </Button>
+                  }
+                />
                 <DropdownMenuContent align="start" className="w-64 mb-1">
                   <div className="px-2 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Your Prompts</div>
                   {prompts.map((p) => (

@@ -62,7 +62,7 @@ export const ToolInterface = ({
   const isLoading = status === "streaming" || status === "submitted"
   const lastMessage = messages[messages.length - 1]
   const result = lastMessage?.role === "assistant" 
-    ? lastMessage.content || (lastMessage.parts
+    ? (lastMessage as any).content || (lastMessage.parts
       ? lastMessage.parts.map((p: any) => (typeof p === "string" ? p : p.text || "")).join("")
       : "")
     : ""
